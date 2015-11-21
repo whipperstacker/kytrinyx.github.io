@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Documentation on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/documentation/</link>
+    <description>Recent content in Documentation on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 27 Sep 2015 10:43:50 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/documentation/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to Run the Go Tour Locally</title>
+      <link>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</link>
+      <pubDate>Sun, 27 Sep 2015 10:43:50 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</guid>
+      <description>
+
+&lt;p&gt;You decided to give Go a try. You installed the language on your Mac, you configured a &lt;code&gt;$GOPATH&lt;/code&gt;, and the internet told you that you should take the Go Tour next.&lt;/p&gt;
+
+&lt;p&gt;Pretty much everywhere they mention the tour, they also tell you that you can install it locally. So you ran the command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  go get golang.org/x/tour/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It clearly worked, because &lt;code&gt;ls $GOPATH/src/golang.org/x/tour/gotour&lt;/code&gt; has the downloaded code, but now you&amp;rsquo;re left with what feels like a silly question:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;How do you actually get it to run?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The short answer is that &lt;code&gt;go get&lt;/code&gt; installed a binary into &lt;code&gt;$GOPATH/bin&lt;/code&gt;, so you can run it with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  $GOPATH/bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That should pop open a browser window to  and you should be all set.&lt;/p&gt;
+
+&lt;p&gt;The longer answer is that how you run it depends on your &lt;code&gt;PATH&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;path-where-programs-live:99d114c93927cc7dc1a5bcd316767ea8&#34;&gt;PATH—Where Programs Live&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;PATH&lt;/code&gt; is a list of places on your filesystem that your computer will look, if you ask it to run a program.&lt;/p&gt;
+
+&lt;p&gt;You can take a look at your &lt;code&gt;PATH&lt;/code&gt; environment variable by running the command&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  echo $PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It will look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  /Users/you/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Except it will probably be much, much longer and have some pretty gnarly looking filepaths. Each filepath is separated by a :.&lt;/p&gt;
+
+&lt;p&gt;So with the path above, if you type gotour in a terminal window, then it will look each of the locations in order, stopping (and running the command) if it finds the program:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/Users/you/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/local/go/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/local/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/sbin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/sbin&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say that your &lt;code&gt;$GOPATH&lt;/code&gt; resolves to &lt;code&gt;/Users/you/code/go&lt;/code&gt;. This means that gotour will be installed in &lt;code&gt;/Users/you/code/go/bin&lt;/code&gt;, which is not in the list, and the computer comes up empty.&lt;/p&gt;
+
+&lt;p&gt;You&amp;rsquo;ll get some sort of message saying that the command is not found. That&amp;rsquo;s fine. You can always tell the computer exactly where to find the program by specifying the full path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  /Users/you/code/go/bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also use a relative path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ../../../bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, if you are in the same directory as the program, then you can prefix the name of the file with &lt;code&gt;./&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ./gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since you are likely to run a lot of Go binaries, you might want to add &lt;code&gt;$GOPATH/bin&lt;/code&gt; to your &lt;code&gt;PATH&lt;/code&gt;. This is really handy, because it lets you run a binary from anywhere on your system without specifying where to find it, just by typing the name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  gotour
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

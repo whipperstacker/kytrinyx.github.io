@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/tools/</link>
+    <description>Recent content in Tools on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 26 Oct 2015 12:13:34 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</title>
+      <link>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</link>
+      <pubDate>Mon, 26 Oct 2015 12:13:34 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</guid>
+      <description>&lt;p&gt;You start out with just the right number of parentheses: the bare minimum. Well, as few as you can get away with, without having to worry about remembering operator precedence. (&lt;em&gt;Does &lt;code&gt;||&lt;/code&gt; bind more tightly than &lt;code&gt;&amp;amp;&amp;amp;[&lt;/code&gt;1]?&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;Then edge cases happen. You wrestle with logic, try out variations, and parentheses accrete.&lt;/p&gt;
+
+&lt;p&gt;Bugfix 1, simplicity 0.&lt;/p&gt;
+
+&lt;p&gt;This leaves you trying to spot the actual logical expressions amidst all the spurious parentheses.&lt;/p&gt;
+
+&lt;p&gt;Noise, in other words. Codejunk[2]. Superfluous visual elements that get in the way of comprehension.&lt;/p&gt;
+
+&lt;p&gt;You might think that &lt;code&gt;gofmt&lt;/code&gt; will take care of it automatically, but if &lt;code&gt;gofmt&lt;/code&gt; removed all the unnecessary parentheses, then readability would take a hit. We&amp;rsquo;d all be back to remembering operator precedence[3].&lt;/p&gt;
+
+&lt;p&gt;Even though &lt;code&gt;gofmt&lt;/code&gt; won&amp;rsquo;t do this automatically, the command has a flag that will let you ask it to remove extraneous parentheses: &lt;code&gt;-r&lt;/code&gt;, for &lt;em&gt;rewrite&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Take this bit of code, observed in the wild:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func IsLeapYear(y int) bool {
+    return ((y%4) == 0 &amp;amp;&amp;amp; (!((y%100) == 0 &amp;amp;&amp;amp; (y%400) != 0)))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the command that will ask &lt;code&gt;gofmt&lt;/code&gt; to show a diff with the extra parentheses removed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gofmt -d -r &#39;(a) -&amp;amp;gt; a&#39; .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this against the above code provides the following diff:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; func IsLeapYear(y int) bool {
+-   return ((y%4) == 0 &amp;amp;&amp;amp; (!((y%100) == 0 &amp;amp;&amp;amp; (y%400) != 0)))
++   return y%4 == 0 &amp;amp;&amp;amp; !(y%100 == 0 &amp;amp;&amp;amp; y%400 != 0)
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is significantly easier to read. In fact, now that the logical expression is readable, it&amp;rsquo;s possible to see that the entire thing can be further simplified.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;y%4 == 0 &amp;amp;&amp;amp; y%100 != 0 || y%400 == 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Check out &lt;a href=&#34;http://`gofmt`&#34; target=&#34;_blank&#34;&gt;the gofmt documentation for details about the rewrite flag.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;1) No.
+2) A play on Edward Tufte&amp;rsquo;s &lt;em&gt;Chartjunk&lt;/em&gt;. I first heard the term codejunk from Carl Manaster in 2009.
+3) To be fair, that&amp;rsquo;s actually &lt;a href=&#34;https://golang.org/ref/spec#Operator_precedence&#34;&gt;not difficult in Go&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Browse the Go Documentation Without an Internet Connection</title>
+      <link>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
+      <pubDate>Sat, 24 Oct 2015 12:12:11 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
+      <description>&lt;p&gt;If you travel a lot (or if you live in the boondocks, like I do), then you&amp;rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.&lt;/p&gt;
+
+&lt;p&gt;To get around this, run a godoc server locally on an available port. I&amp;rsquo;ve often seen people use 6060 or 4040.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives you access to all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;: the Go standard library, as well as any other packages you may have installed.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Run a `godoc` Server Locally to See Documentation for Unpublished Packages</title>
+      <link>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
+      <pubDate>Sat, 03 Oct 2015 11:52:34 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
+      <description>&lt;p&gt;Gophers care a lot about documentation and people appreciate it immensely when you have a great overview, succinct summaries, great examples, and helpful details about gotchas.&lt;/p&gt;
+
+&lt;p&gt;Often it&amp;rsquo;s only after publishing a library and then perusing the generated documentation on &lt;a href=&#34;https://godoc.org/&#34;&gt;godoc.org&lt;/a&gt; that you start seeing the missing bits and pieces. Typos jump out. Awkward phrases make you want to cringe. You realize that you really need a good example for that one core function.&lt;/p&gt;
+
+&lt;p&gt;The publish–review–fix–republish cycle can be pretty tedious, and it makes for a noisy commit log.&lt;/p&gt;
+
+&lt;p&gt;A great way to short-circuit this cycle is to run a godoc server locally so that you can click around the documentation for your project in your own browser.&lt;/p&gt;
+
+&lt;p&gt;Pick a port to run the server on, say 6060, and start it with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can browse all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;. You don&amp;rsquo;t have to restart the server to get the changes when you edit a doc comment, just save the file and refresh the page in the browser.&lt;/p&gt;
+
+&lt;p&gt;For more about documenting your projects, check out the article &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;Godoc: Documenting Go Code&lt;/a&gt; by Andrew Gerrand on the official Go blog.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
+      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
+      <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
+      <description>
+
+&lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve even seen scores of 0%, when clearly there is code being exercised. It&amp;rsquo;s just that the code happens to live in other packages within the project.&lt;/p&gt;
+
+&lt;p&gt;Because these tests tie so many things together, what you really want to know is much of the &lt;em&gt;entire&lt;/em&gt; codebase is exercised when they are run.&lt;/p&gt;
+
+&lt;p&gt;To illustrate, &lt;a href=&#34;https://github.com/kytrinyx/fish&#34;&gt;fish&lt;/a&gt; is a small, somewhat whimsical command-line application, that provides random fish-ascii art.&lt;/p&gt;
+
+&lt;p&gt;It takes a &lt;code&gt;-msg&lt;/code&gt; flag, and outputs a fish that swims and talks.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go run main.go -msg=&amp;quot;Lovely day for a swim&amp;quot; ./...
+
+          o˚• Lovely day for a swim .o.˚
+&amp;gt;&amp;lt;«««º&amp;gt; ·°
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In addition to main, there are two packages: &lt;code&gt;bubbles&lt;/code&gt; and &lt;code&gt;fish&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.
+├── bubbles
+│   └── bubbles.go
+├── fish
+│   └── fish.go
+├── main.go
+└── main_test.go
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
+
+&lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -cover
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That seems low. We can get some statistics about exactly what was exercised by the tests by using the &lt;code&gt;-coverprofile&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverprofile=cover.out
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.024s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the go tool we can take a closer look at those stats.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go tool cover -func=cover.out
+github.com/kytrinyx/fish/main.go:16:    main        0.0%
+github.com/kytrinyx/fish/main.go:23:    Doodle      100.0%
+total:                  (statements)    33.3%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Main is essentially a one-liner, and doesn&amp;rsquo;t need to be tested. Doodle is also a one-liner, so 100% test coverage makes sense. But Doodle calls fish, which in turn calls bubbles, and we&amp;rsquo;re not seeing any stats for either of those packages.&lt;/p&gt;
+
+&lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
+
+&lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./...
+PASS
+coverage: 81.0% of statements in ./...
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;81% is excellent test coverage. Let&amp;rsquo;s see what&amp;rsquo;s included.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./... -coverprofile=cover.out
+go tool cover -func=cover.out
+
+github.com/kytrinyx/fish/bubbles/bubbles.go:21: New     66.7%
+github.com/kytrinyx/fish/bubbles/bubbles.go:29: Embellish   100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:34: Blub        100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:42: randomBubble    100.0%
+github.com/kytrinyx/fish/fish/fish.go:23:   randomBody  100.0%
+github.com/kytrinyx/fish/fish/fish.go:27:   randomEye   100.0%
+github.com/kytrinyx/fish/fish/fish.go:31:   randomFin   100.0%
+github.com/kytrinyx/fish/fish/fish.go:36:   New     66.7%
+github.com/kytrinyx/fish/fish/fish.go:47:   Say     100.0%
+github.com/kytrinyx/fish/main.go:16:        main        0.0%
+github.com/kytrinyx/fish/main.go:23:        Doodle      100.0%
+total:                      (statements)    81.0%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It turns out the only things that are not covered are main (0%), bubbles.New (67%), and fish.New (67%).&lt;/p&gt;
+
+&lt;p&gt;That seems perfectly acceptable.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
+      <link>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
+      <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
+      <description>
+
+&lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t just a &lt;em&gt;to-may-to to-mah-to&lt;/em&gt; kind of thing. All of these concepts are related.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc—the web server&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;godoc&lt;/code&gt; tool is intended primarily to run a documentation server in your browser on &lt;a href=&#34;http://localhost:6060/pkg/&#34;&gt;localhost&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It includes the documentation for the Go standard library, along with any package that lives in your GOPATH.&lt;/p&gt;
+
+&lt;p&gt;It can also format documentation as plain text on the command-line, where you would pass the import path of the package you are interested in. This was added as an afterthought.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc golang.org/x/tools/godoc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running &lt;code&gt;godoc&lt;/code&gt; without any arguments will output the usage statement for the tool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;usage: godoc package [name ...]
+       godoc -http=:6060
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
+
+&lt;p&gt;The familiar &lt;code&gt;go&lt;/code&gt; command-line tool, which is used to &lt;code&gt;go run&lt;/code&gt; or &lt;code&gt;go build&lt;/code&gt; or &lt;code&gt;go test&lt;/code&gt;, also has a subcommand &lt;code&gt;doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;doc&lt;/code&gt; subcommand will print out the documentation for whatever argument you pass it: a package, const, func, type, var, or method.&lt;/p&gt;
+
+&lt;p&gt;Unlike the &lt;code&gt;godoc&lt;/code&gt; command, &lt;code&gt;go doc&lt;/code&gt; was intended from the start to be convenient from the command-line.&lt;/p&gt;
+
+&lt;p&gt;The most important difference between &lt;code&gt;godoc&lt;/code&gt; and &lt;code&gt;go doc&lt;/code&gt; on the command-line, is that the syntax for &lt;code&gt;go doc&lt;/code&gt; is, well, Go.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc gob.Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The equivalent command using &lt;code&gt;godoc&lt;/code&gt; is a bit more awkward, requiring the full import path:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc encoding/gob Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The default behavior of &lt;code&gt;go doc&lt;/code&gt; when calling it without arguments, is to display the documentation for the current package.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc.org—the website&lt;/h2&gt;
+
+&lt;p&gt;godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.&lt;/p&gt;
+
+&lt;p&gt;The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local &lt;code&gt;godoc&lt;/code&gt; server, but as pointed out in the comments, godoc.org doesn&amp;rsquo;t use the output from the &lt;code&gt;godoc&lt;/code&gt; tool.&lt;/p&gt;
+
+&lt;h2 id=&#34;go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go/doc—the package&lt;/h2&gt;
+
+&lt;p&gt;The command &lt;code&gt;godoc&lt;/code&gt; and the website godoc.org both rely on the package &lt;code&gt;go/doc&lt;/code&gt; to extract source code documentation.&lt;/p&gt;
+
+&lt;p&gt;If you were to use &lt;code&gt;godoc&lt;/code&gt; to ask about &lt;code&gt;go/doc&lt;/code&gt;, it would tell you all about it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ godoc go/doc
+PACKAGE DOCUMENTATION
+
+package doc
+    import &amp;quot;go/doc&amp;quot;
+
+    Package doc extracts source code documentation from a Go AST.
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;If in doubt…&lt;/h2&gt;
+
+&lt;p&gt;When people are referring to the package go/doc in casual conversation, they&amp;rsquo;ll often drop the slash. And when saying &lt;em&gt;go doc&lt;/em&gt; they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re unsure of exactly which one they mean, ask for clarification!&lt;/p&gt;
+
+&lt;h2 id=&#34;summary:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;The package &lt;code&gt;go/doc&lt;/code&gt; is used by other tools to extract the documentation comments from the AST.&lt;/p&gt;
+
+&lt;p&gt;The command-line tool &lt;code&gt;godoc&lt;/code&gt; is a web server first, and outputs plain text documentation to STDOUT as an afterthought, whereas &lt;code&gt;go doc&lt;/code&gt; is intended to be used to output documentation on the command-line.&lt;/p&gt;
+
+&lt;p&gt;The godoc.org website is the publicly searchable documentation for go packages that are not a part of the standard library.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;With thanks to Rob Pike for clarifying the reasoning behind the various tools.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to View the Documentation for a Single Standard Library Function on the Command-Line</title>
+      <link>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
+      <pubDate>Tue, 29 Sep 2015 10:57:09 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
+      <description>&lt;p&gt;You know exactly which function you need to use, and you know which package it&amp;rsquo;s in, and you seem to recall that there&amp;rsquo;s a gotcha with it, but for the life of you, you just cannot remember the details.&lt;/p&gt;
+
+&lt;p&gt;Your first instinct might be to hit up a search engine: &lt;em&gt;golang filepath walk&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s fine, and it will get you what you need quickly, along with about 30,000 other results.&lt;/p&gt;
+
+&lt;p&gt;If all you want is the language documentation, though, you can get exactly what you need right on the command-line.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc filepath.Walk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The documentation will show up right in the shell:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package filepath // import &amp;quot;path/filepath&amp;quot;
+
+func Walk(root string, walkFn WalkFunc) error
+
+    Walk walks the file tree rooted at root, calling walkFn for each file or
+    directory in the tree, including root. All errors that arise visiting files
+    and directories are filtered by walkFn. The files are walked in lexical
+    order, which makes the output deterministic but means that for very large
+    directories Walk can be inefficient. Walk does not follow symbolic links.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There&amp;rsquo;s that gotcha: It won&amp;rsquo;t follow symlinks.&lt;/p&gt;
+
+&lt;p&gt;As an added bonus, this also works with your own libraries&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc bubbles.Embellish
+
+package bubbles // import &amp;quot;github.com/kytrinyx/fish/bubbles&amp;quot;
+
+func Embellish(s string) string
+
+    Embellish decorates the string with ascii bubbles.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s pretty nifty!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note: the &lt;code&gt;doc&lt;/code&gt; subcommand was introduced in Go 1.5.&lt;/strong&gt; If you are using an older version of Go you can use the &lt;code&gt;godoc&lt;/code&gt; command, which takes the full import path to the package:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc path/filepath Walk
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

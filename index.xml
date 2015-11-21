@@ -1,0 +1,1099 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/</link>
+    <description>Recent content on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
+      <link>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
+      <pubDate>Sun, 01 Nov 2015 12:15:26 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
+      <description>
+
+&lt;p&gt;If you&amp;rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&amp;rsquo;s a yak that is begging to be shaved.&lt;/p&gt;
+
+&lt;p&gt;The process might go something like this:&lt;/p&gt;
+
+&lt;p&gt;Step 1: Generate a pleasing color palette using something like &lt;a href=&#34;https://coolors.co&#34;&gt;Coolers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Step 2: Pick a font that isn&amp;rsquo;t embarrassing.&lt;/p&gt;
+
+&lt;p&gt;Step 3: Find the right graphics.&lt;/p&gt;
+
+&lt;p&gt;Step 4: Figure out how to incorporate the graphics into the slide deck.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s that fourth step that gets hairy.&lt;/p&gt;
+
+&lt;p&gt;That is, unless you&amp;rsquo;ve spent 10-30 hours trawling stock photography websites looking for the perfect photographs that match both your presentation topic and your color palette. In that case, then you&amp;rsquo;re probably all set.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, if what you&amp;rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&amp;rsquo;s either going to be embarrassing, or complicated.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&amp;rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.&lt;/p&gt;
+
+&lt;p&gt;An easier solution is to write a small command-line tool to do the conversion for you, and then take a screenshot of the black and white graphic on the internet and run it through your converter.&lt;/p&gt;
+
+&lt;p&gt;It turns out, it&amp;rsquo;s very, very easy to decode a PNG using the &lt;code&gt;image&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
+
+&lt;p&gt;Read the image from the filesystem.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r, err := os.Open(&amp;quot;screenshot.png&amp;quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer r.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Decode it into an &lt;code&gt;image.Image&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;img, _, err := image.Decode(r)
+if err != nil {
+    log.Fatal(err)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;img&lt;/code&gt; is a type that satisfies the &lt;code&gt;image.Image&lt;/code&gt; interface. It&amp;rsquo;s probably an &lt;code&gt;image.RGBA&lt;/code&gt; or &lt;code&gt;image.NRGBA&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Do a type conversion to access the pixel values in the PNG.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;in := m.(*image.RGBA)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then create a new image based on the old one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;out := &amp;amp;image.RGBA{
+    Pix:    make([]uint8, len(in.Pix)),
+    Stride: in.Stride,
+    Rect:   in.Rect,
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Create your new background and foreground colors. You can use hex literals for this, which makes it easy to match the hex colors that online color palettes will give you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// #2E1C2B
+bg := color.RGBA{0x2e, 0x1c, 0x2b, 0xff}
+
+// #893168
+fg := color.RGBA{0x89, 0x31, 0x68, 0xff}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A naive approach to deciding whether something is light or dark is to use the R, G, and B values in the pixel and cut everything off at half-way between 0 and 255.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;isBackground := func(c color.Color) bool {
+    rgb := c.(color.RGBA)
+    return rgb.R &amp;gt; 127 &amp;amp;&amp;amp; rgb.G &amp;gt; 127 &amp;amp;&amp;amp; rgb.B &amp;gt; 127
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can loop through and replace the existing pixels with the new values.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;max := in.Rect.Max
+for x := 0; x &amp;lt; max.X; x++ {
+    for y := 0; y &amp;lt; max.Y; y++ {
+        v := in.At(x, y)
+        if isBackground(v) {
+            out.Set(x, y, bg)
+            continue
+        }
+        out.Set(x, y, fg)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, write the result to a new file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;w, _ := os.Create(*outFile)
+defer func() {
+    if err := w.Close(); err != nil {
+        log.Fatal(err)
+    }
+}()
+
+png.Encode(w, out)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to write this yourself, take a look at the &lt;a href=&#34;https://github.com/kytrinyx/twotone&#34;&gt;twotone&lt;/a&gt; command-line tool, which adds some convenient flags for specifying background/foreground colors on the fly, as well as input and output files.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</title>
+      <link>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</link>
+      <pubDate>Mon, 26 Oct 2015 12:13:34 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</guid>
+      <description>&lt;p&gt;You start out with just the right number of parentheses: the bare minimum. Well, as few as you can get away with, without having to worry about remembering operator precedence. (&lt;em&gt;Does &lt;code&gt;||&lt;/code&gt; bind more tightly than &lt;code&gt;&amp;amp;&amp;amp;[&lt;/code&gt;1]?&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;Then edge cases happen. You wrestle with logic, try out variations, and parentheses accrete.&lt;/p&gt;
+
+&lt;p&gt;Bugfix 1, simplicity 0.&lt;/p&gt;
+
+&lt;p&gt;This leaves you trying to spot the actual logical expressions amidst all the spurious parentheses.&lt;/p&gt;
+
+&lt;p&gt;Noise, in other words. Codejunk[2]. Superfluous visual elements that get in the way of comprehension.&lt;/p&gt;
+
+&lt;p&gt;You might think that &lt;code&gt;gofmt&lt;/code&gt; will take care of it automatically, but if &lt;code&gt;gofmt&lt;/code&gt; removed all the unnecessary parentheses, then readability would take a hit. We&amp;rsquo;d all be back to remembering operator precedence[3].&lt;/p&gt;
+
+&lt;p&gt;Even though &lt;code&gt;gofmt&lt;/code&gt; won&amp;rsquo;t do this automatically, the command has a flag that will let you ask it to remove extraneous parentheses: &lt;code&gt;-r&lt;/code&gt;, for &lt;em&gt;rewrite&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Take this bit of code, observed in the wild:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func IsLeapYear(y int) bool {
+    return ((y%4) == 0 &amp;amp;&amp;amp; (!((y%100) == 0 &amp;amp;&amp;amp; (y%400) != 0)))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the command that will ask &lt;code&gt;gofmt&lt;/code&gt; to show a diff with the extra parentheses removed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gofmt -d -r &#39;(a) -&amp;amp;gt; a&#39; .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this against the above code provides the following diff:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; func IsLeapYear(y int) bool {
+-   return ((y%4) == 0 &amp;amp;&amp;amp; (!((y%100) == 0 &amp;amp;&amp;amp; (y%400) != 0)))
++   return y%4 == 0 &amp;amp;&amp;amp; !(y%100 == 0 &amp;amp;&amp;amp; y%400 != 0)
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is significantly easier to read. In fact, now that the logical expression is readable, it&amp;rsquo;s possible to see that the entire thing can be further simplified.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;y%4 == 0 &amp;amp;&amp;amp; y%100 != 0 || y%400 == 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Check out &lt;a href=&#34;http://`gofmt`&#34; target=&#34;_blank&#34;&gt;the gofmt documentation for details about the rewrite flag.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;1) No.
+2) A play on Edward Tufte&amp;rsquo;s &lt;em&gt;Chartjunk&lt;/em&gt;. I first heard the term codejunk from Carl Manaster in 2009.
+3) To be fair, that&amp;rsquo;s actually &lt;a href=&#34;https://golang.org/ref/spec#Operator_precedence&#34;&gt;not difficult in Go&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Browse the Go Documentation Without an Internet Connection</title>
+      <link>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
+      <pubDate>Sat, 24 Oct 2015 12:12:11 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
+      <description>&lt;p&gt;If you travel a lot (or if you live in the boondocks, like I do), then you&amp;rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.&lt;/p&gt;
+
+&lt;p&gt;To get around this, run a godoc server locally on an available port. I&amp;rsquo;ve often seen people use 6060 or 4040.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives you access to all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;: the Go standard library, as well as any other packages you may have installed.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Itty Bitty Go Idiom: If Without Else</title>
+      <link>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</link>
+      <pubDate>Fri, 16 Oct 2015 12:09:52 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</guid>
+      <description>&lt;p&gt;Writing code in a new language can sometimes make you feel like an introvert at a party where you don&amp;rsquo;t know anyone, in a country where you&amp;rsquo;re not sure about the customs.&lt;/p&gt;
+
+&lt;p&gt;For the most part you&amp;rsquo;re not going to insult anyone too badly, and you&amp;rsquo;ll probably have a reasonably good time, even if occasionally people will think that you&amp;rsquo;re quaint or a bit daft or have kind of bad manners.&lt;/p&gt;
+
+&lt;p&gt;Usually the things you&amp;rsquo;re doing wrong are going to be things that never, ever occurred to you to even think about. For example, if you&amp;rsquo;re an American in France, try not to smile at strangers all the time.&lt;/p&gt;
+
+&lt;p&gt;With programming you&amp;rsquo;re probably not worried about insulting someone with outlandish habits, but you might be feeling a bit awkward and uncertain. The code works as intended, but you&amp;rsquo;re not sure if you&amp;rsquo;re doing things the right way. The Go way.&lt;/p&gt;
+
+&lt;p&gt;You will think to ask about all sorts of things: &lt;code&gt;CamelCase&lt;/code&gt; or &lt;code&gt;snake_case&lt;/code&gt; or &lt;code&gt;ALL_CAPS&lt;/code&gt;? Tabs or spaces?&lt;/p&gt;
+
+&lt;p&gt;It might never occur to you that the &lt;code&gt;if&lt;/code&gt;/&lt;code&gt;else&lt;/code&gt; that you&amp;rsquo;ve used in every single language that you&amp;rsquo;ve written code in (except that one project in SmallTalk) might be a tip-off that you&amp;rsquo;re new around these parts.&lt;/p&gt;
+
+&lt;p&gt;While it&amp;rsquo;s not considered bad practice to use &lt;code&gt;else&lt;/code&gt;, it&amp;rsquo;s actually fairly uncommon to see an &lt;code&gt;else&lt;/code&gt; or &lt;code&gt;else if&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Try to keep the normal code path at a minimal indentation, and indent the error handling, dealing with it first.
+- &lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments#indent-error-flow&#34;&gt;CodeReviewComments&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In other words, you&amp;rsquo;re going to see a lot of this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if someErrorCondition {
+    // handle the sad path
+    return
+}
+// do the happy path thing
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And not a whole lot of this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if allGood {
+  // yepp
+} else {
+  // nope
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</title>
+      <link>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
+      <pubDate>Wed, 14 Oct 2015 12:07:58 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s quite possible to run &lt;code&gt;golint&lt;/code&gt; without complaint and end up with documentation that is mediocre and unhelpful.&lt;/p&gt;
+
+&lt;p&gt;Part of the problem is that programmers coming to Go from other languages have a lot of baggage.&lt;/p&gt;
+
+&lt;p&gt;If you took Java classes in college, there&amp;rsquo;s a chance that you&amp;rsquo;ve been taught to document all your inputs and outputs for every public method. The comments end up being oh-so machine-readable, and oh-so tedious to parse with your eyes.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve been working in dynamic languages for a while, then chances are great that you&amp;rsquo;ve embraced the philosophy that comments are, at the very best, noise, and at the worst, lies. You might argue that comments are a form of duplication and that code should tell such a good story that comments become superfluous.&lt;/p&gt;
+
+&lt;p&gt;If your career has been focused on shipping code in fast-paced environments, then you&amp;rsquo;ve likely got a minimalistic and very pragmatic approach to documentation. Helping colleagues (or future you) avoid going down that rabbit hole (again!) is considered essential, but for the most part, commenting code seems like an academic exercise, not a practical concern in the real world.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re not a programmer yet and are working your way up to your first programming job, then it&amp;rsquo;s even harder. You&amp;rsquo;re stuck with the blank slate. It can be difficult to imagine what information could possibly be useful to someone later.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a comment that makes &lt;code&gt;golint&lt;/code&gt; happy, but not much else.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// IsLeapYear defines a function IsLeapYear(int) bool.
+func IsLeapYear(year int) bool {
+  // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It starts with the function name, and it&amp;rsquo;s a full, natural-language sentence, just as the &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;commentary section of Effective Go&lt;/a&gt; recommends.&lt;/p&gt;
+
+&lt;p&gt;But take a look at how this reads when looking at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc cal.IsLeapYear
+func IsLeapYear(year int) bool
+    IsLeapYear defines a function IsLeapYear(int) bool.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It practically echoes.&lt;/p&gt;
+
+&lt;p&gt;The various documentation tools in Go, &lt;a href=&#34;http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc/&#34;&gt;go doc, godoc, and godoc.org&lt;/a&gt; all display the function signature along with the doc comments.&lt;/p&gt;
+
+&lt;p&gt;A good comment is about the &lt;em&gt;function&lt;/em&gt;. A great comment will answer questions someone might have when browsing the documentation. What does the function do? Why would you want to use it? What problem does it solve? What are the gotchas?&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; Godoc comments are just good comments, the sort you would want to read even if godoc didn&amp;rsquo;t exist.&lt;/p&gt;
+
+&lt;p&gt;– &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;The Go Blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The standard library is full of great examples.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc os.Exit
+func Exit(code int)
+    Exit causes the current program to exit with the given status code.
+    Conventionally, code zero indicates success, non-zero an error. The program
+    terminates immediately; deferred functions are not run.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This comment not only tells us what the function does (&lt;em&gt;causes the current program to exit with the given status code&lt;/em&gt;), but also provides information about conventions (&lt;em&gt;code zero indicates success&lt;/em&gt;), and also important and non-obvious information (&lt;em&gt;deferred functions are not run&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;A better comment for the leap year function would note that this is valid for the Gregorian calendar. It might also mention that it&amp;rsquo;s valid for years that occurred before the Gregorian reform in 1582, but that it&amp;rsquo;s not valid for negative years (representing years numbered with BC notation).&lt;/p&gt;
+
+&lt;p&gt;It might even link to the delightful &lt;a href=&#34;https://www.youtube.com/watch?v=xX96xng7sAE&#34;&gt;4 minute video&lt;/a&gt; by CGP Gray that explains why we even have leap years.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Tiaras &amp; Toolbelts: A Trivial Concurrency Exercise for the Confused Newbie Gopher</title>
+      <link>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</link>
+      <pubDate>Tue, 13 Oct 2015 12:04:23 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</guid>
+      <description>
+
+&lt;p&gt;Sometimes you wonder if the program is mocking you.&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; all goroutines are asleep&lt;/p&gt;
+
+&lt;p&gt;Asleep. That sounds wonderful. Instead, here you are wondering whether deadlock would make a good bandname, and if you have any ketchup and mayonnaise left so you can make goopy red ramen noodles. Oh, yeah. And wondering why your app is hanging.&lt;/p&gt;
+
+&lt;p&gt;Perhaps all you need is a good night&amp;rsquo;s sleep and a decent meal, and you&amp;rsquo;ll find the unclosed channel or the &lt;code&gt;WaitGroup&lt;/code&gt; that is missing a call to &lt;code&gt;Done()&lt;/code&gt;, or whatever it is this time that has you perplexed and frustrated.&lt;/p&gt;
+
+&lt;p&gt;Or, maybe, you just need a break from name servers and other computer-science-y things so you can think about concurrency in the context of toys.&lt;/p&gt;
+
+&lt;h2 id=&#34;santa-s-workers:fb2b314049b270b14ac9ea08c88a9d93&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
+
+&lt;p&gt;Kraneisha is 4 years old. This year she has asked Santa for a tiara and a toolbelt so that she can be a princess mechanic.&lt;/p&gt;
+
+&lt;p&gt;She is one of about a million children who have asked for stuff. Things. Toys. Electronics. Blinky lights and obnoxious noisemakers.&lt;/p&gt;
+
+&lt;p&gt;The Elf typing pool has been normalizing requests into a text file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Kraneisha, 4, Tiara and toolbelt
+Eddie, 8, Chemistry set
+Ty, 5, Gaming console
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Write a program to simulate Santa&amp;rsquo;s workshop&lt;/strong&gt;, where a single stream of requests gets portioned out to 1,000 elves to produce the gifts. Each completed gift is then shunted to the Wrapping Station, where they are packaged up and added to the sleigh.&lt;/p&gt;
+
+&lt;p&gt;Once all one million gifts wrapped and stowed, the sleigh can take off.&lt;/p&gt;
+
+&lt;p&gt;Don&amp;rsquo;t worry about the mechanics of fitting one million gift-wrapped toys onto a sleigh. I&amp;rsquo;m pretty sure there&amp;rsquo;s magic involved.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Decoding a File Full of Individual JSON Objects using a json.Decoder</title>
+      <link>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</link>
+      <pubDate>Sun, 11 Oct 2015 12:03:14 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</guid>
+      <description>&lt;p&gt;You can wish for a proper JSON array all you like, it&amp;rsquo;s not going to turn your file full of JSON objects into valid JSON. It&amp;rsquo;s not that each bit of JSON isn&amp;rsquo;t valid, it totally is. It&amp;rsquo;s just that you&amp;rsquo;ve got hundreds of these JSON objects that were all dumped into the same file.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re new to Go, you might find yourself hunting through the &lt;code&gt;io&lt;/code&gt; and &lt;code&gt;ioutil&lt;/code&gt; packages for a way to read a file full of JSON objects and turn them into Go structs, but these packages will only get you partway there.&lt;/p&gt;
+
+&lt;p&gt;To turn a file full of distinct JSON objects into distinct Go struct values, you need two things:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;an &lt;code&gt;io.Reader&lt;/code&gt; that doesn&amp;rsquo;t slurp the entire file into memory at once, and&lt;/li&gt;
+&lt;li&gt;a &lt;code&gt;json.Decoder&lt;/code&gt;, which will let you keep reading json objects until you reach the end of the file&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Here&amp;rsquo;s an example file, &lt;code&gt;elements.json&lt;/code&gt;, that contains a list of JSON objects. Notice that there&amp;rsquo;s not a square bracket in sight. In other words, this is not an array.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{&amp;quot;symbol&amp;quot;:&amp;quot;S&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Sulfur&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Cl&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Chlorine&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;K&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Potassium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ar&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Argon&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ca&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Calcium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Sc&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Scandium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ti&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Titanium&amp;quot;}
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The objects don&amp;rsquo;t have to be separated by newlines, it would still work if the objects were all jammed together on a single line.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{&amp;quot;symbol&amp;quot;:&amp;quot;S&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Sulfur&amp;quot;}{&amp;quot;symbol&amp;quot;:&amp;quot;Cl&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Chlorine&amp;quot;}{&amp;quot;symbol&amp;quot;:&amp;quot;K&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Potassium&amp;quot;}...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To get started, create a struct definition that you can unmarshal each object into.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type Element struct {
+    Symbol string
+    Name   string
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Get a reader for the file using &lt;code&gt;os.Open&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;f, err := os.Open(&amp;quot;elements.json&amp;quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer f.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Create a decoder that reads from the open file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;dec := json.NewDecoder(f)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then loop until the stream reaches the end of the file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;elements := []Element{}
+for {
+    var e Element
+    if err := dec.Decode(&amp;amp;amp;e); err != nil {
+        if err == io.EOF {
+            break
+        }
+        log.Fatal(err)
+    }
+
+    elements = append(elements, e)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also go play with the documentation for the encoding/json package in the standard library, which &lt;a href=&#34;https://golang.org/pkg/encoding/json/#example_Decoder&#34;&gt;includes a runnable example&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Defining Methods: Pointer Receivers and Value Receivers—Which Should You Choose?</title>
+      <link>http://whipperstacker.com/2015/10/10/defining-methods-pointer-receivers-and-value-receiverswhich-should-you-choose</link>
+      <pubDate>Sat, 10 Oct 2015 12:01:21 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/10/defining-methods-pointer-receivers-and-value-receiverswhich-should-you-choose</guid>
+      <description>
+
+&lt;p&gt;Many people are scared of pointers when they first get started in Go, especially if they&amp;rsquo;re coming to Go from dynamic languages that don&amp;rsquo;t expose the concept. Even after they&amp;rsquo;ve gotten a good grasp on what pointers are and how they work, many new gophers feel a bit anxious about when they should be defining a method on a value rather than a pointer.&lt;/p&gt;
+
+&lt;p&gt;The Go team has given a good set of guidelines in their &lt;a href=&#34;https://golang.org/doc/faq#methods_on_values_or_pointers&#34;&gt;FAQ&lt;/a&gt;, listing three basic considerations.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Modification&lt;/strong&gt;: If you need to modify the receiver, then it must be a pointer.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Efficiency&lt;/strong&gt;: If your value is large, use a pointer.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Consistency&lt;/strong&gt;: Don&amp;rsquo;t mix pointer / value receivers for a given type.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;There are exceptions, but starting with these guidelines as a rule of thumb will get you pretty far.&lt;/p&gt;
+
+&lt;p&gt;Another excellent resource when it comes to making the decision about pointer vs value receivers is the &lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments#receiver-type&#34;&gt;Code Review Comments wiki page&lt;/a&gt; on the golang/go project on GitHub. It has a section about receiver types, which you should absolutely go read. It concludes with &lt;em&gt;when in doubt, use a pointer receiver&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;why-would-you-ever-use-a-non-pointer-receiver:d50cffd73db67296e192c311b4a1600b&#34;&gt;Why Would You Ever Use a Non-Pointer Receiver?&lt;/h2&gt;
+
+&lt;p&gt;When the receiver is a map or a slice you will almost always want to use a value receiver for these. Almost. Maps and slices act as references. &lt;a href=&#34;http://blog.golang.org/go-slices-usage-and-internals&#34;&gt;Go Slices: Usage and Internals&lt;/a&gt; on the official Go blog is a fantastic deep dive into slices, and you should go read it if you haven&amp;rsquo;t already, in order to understand why you occasionally will want to use a pointer receiver for a slice.&lt;/p&gt;
+
+&lt;p&gt;Aside from types that act as references, the most common case for defining a value receiver rather than a pointer receiver is when you are defining a small struct type that acts as a value. The term &lt;em&gt;value&lt;/em&gt; here might be a bit confusing, because this &amp;ldquo;value&amp;rdquo; is not the same &amp;ldquo;value&amp;rdquo; as in &lt;em&gt;value receiver vs. pointer receiver&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is about identity.&lt;/p&gt;
+
+&lt;p&gt;If you have two values of a given type, and all their fields have the same values in them, do they represent the same thing?&lt;/p&gt;
+
+&lt;p&gt;Sometimes the answer is yes. For example, 2:15pm is 2:15pm, provided that they&amp;rsquo;re both in the same timezone. You might have a bunch of copies of this value, each copy might live in a different place in memory, but they&amp;rsquo;re all equivalent.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t always the case. For example you could have two people, both named Bob Smith, and both born on the same day. That doesn&amp;rsquo;t mean that they&amp;rsquo;re the same person, as anyone married to a Bob Smith can attest to. You can&amp;rsquo;t just trade one Bob Smith for another.&lt;/p&gt;
+
+&lt;p&gt;Dates, times, points, vectors, web-safe colors are all typically small, and their identity is based on their value.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s idiomatic in Go to define a value receiver rather than a pointer receiver for these types.&lt;/p&gt;
+
+&lt;p&gt;Some people ask: &lt;em&gt;Isn&amp;rsquo;t it always more efficient to use a pointer receiver?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Two answers:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Nope.&lt;/li&gt;
+&lt;li&gt;You profiled, right?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;A pointer receiver introduces indirection. In some cases this indirection has a measurable cost.&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; The problem most people have, is that they try to make this decision based on what they think the performance tradeoff will be. – William Kennedy, &lt;a href=&#34;http://www.goinggo.net/2014/12/using-pointers-in-go.html&#34;&gt;Using Pointers in Go&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s far better to make choices based on what is simple and idiomatic, than on some pre-conceived idea of what will perform well.&lt;/p&gt;
+
+&lt;p&gt;To quote the &lt;a href=&#34;http://c2.com/cgi/wiki?RulesOfOptimization&#34;&gt;Rules of Optimization&lt;/a&gt;:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;The First Rule of Optimization: Don&amp;rsquo;t.&lt;/li&gt;
+&lt;li&gt;The Second Rule of Optimization: Don&amp;rsquo;t… yet.&lt;/li&gt;
+&lt;li&gt;Profile before optimizing.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Compute the Last Day of a Month using the `time` Package in the Standard Library</title>
+      <link>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</link>
+      <pubDate>Fri, 09 Oct 2015 11:59:48 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</guid>
+      <description>
+
+&lt;p&gt;If you&amp;rsquo;re having trouble finding the convenience function in Go to compute the last day of the month, it&amp;rsquo;s because it&amp;rsquo;s not there. Libraries have been written to add specialized time and date functions, but you really don&amp;rsquo;t have to reach for an external dependency.&lt;/p&gt;
+
+&lt;p&gt;Here are three ways to compute the last day of the any month using the existing functionality in the &lt;code&gt;time&lt;/code&gt; package in Go&amp;rsquo;s standard library.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-32nd-day:f4beea25695020758a2c64267c269442&#34;&gt;The 32nd Day&lt;/h2&gt;
+
+&lt;p&gt;Ian Lance Taylor suggested a trick where you get the 32nd day of the month you&amp;rsquo;re interested in, which becomes the _n_th day of the next month. Then you can subtract 32-n to get the value you&amp;rsquo;re looking for.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;32 - time.Date(2016, time.February, 32, 0, 0, 0, 0, time.UTC).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-zeroth-day:f4beea25695020758a2c64267c269442&#34;&gt;The Zeroth Day&lt;/h2&gt;
+
+&lt;p&gt;An even simpler trick, suggested by a fellow named Johnathan is to use the &amp;ldquo;zeroth&amp;rdquo; day of the following month, which by definition is the last day in the month you&amp;rsquo;re interested in.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;time.Date(2012, time.February+1, 0, 0, 0, 0, 0, time.UTC).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;a-month-less-a-day:f4beea25695020758a2c64267c269442&#34;&gt;A Month—Less a Day&lt;/h2&gt;
+
+&lt;p&gt;If you have a value of type &lt;code&gt;time.Time&lt;/code&gt; representing the first day of the month, then you can use &lt;code&gt;AddDate()&lt;/code&gt; to get the value that you want:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ts := time.Date(2008, time.February, 1, 0, 0, 0, 0, time.UTC)
+ts.AddDate(0, 1, -1).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, you could use the timestamp with either of the previous methods by accessing the month and year:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ts.Year() // 2008
+ts.Month() // 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;don-t-reach-for-that-dependency:f4beea25695020758a2c64267c269442&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
+
+&lt;p&gt;Before reaching for a 3rd party library or package, take a good look at what the standard library can offer.&lt;/p&gt;
+
+&lt;p&gt;Just because Go&amp;rsquo;s &lt;a href=&#34;https://golang.org/pkg/time/&#34;&gt;&lt;code&gt;time&lt;/code&gt; package&lt;/a&gt; doesn&amp;rsquo;t have a convenience function, doesn&amp;rsquo;t mean that it&amp;rsquo;s not convenient to use it.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Silence Noisy Output from Command-Line Tools by Monitoring Progress with SIGINFO</title>
+      <link>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</link>
+      <pubDate>Mon, 05 Oct 2015 11:58:09 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</guid>
+      <description>&lt;p&gt;Every few weeks the team changes what data needs to be exposed in the app. Every few weeks you need to re-run the cache-warmer so that Elasticsearch has the right data, and the website can serve snappy pages without making all the slow, complicated queries on the fly.&lt;/p&gt;
+
+&lt;p&gt;Every day, the data grows, and the task is taking longer and longer to run.&lt;/p&gt;
+
+&lt;p&gt;The longer it takes, the antsier the team gets, wondering if perhaps it&amp;rsquo;s not working. Everyone recalls that one time they&lt;a href=&#34;https://twitter.com/enneff/status/537572707731128320&#34;&gt;1&lt;/a&gt; accidentally forgot to increment the counter and spent hours and hours processing the same 1000 rows over and over again.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s very, very tempting to print progress reports:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;indexed report 1
+indexed report 4
+indexed report 10
+deleted report 11
+deleted report 27
+indexed report 28
+...
+indexed report 31202381
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, if you don&amp;rsquo;t want to spew 31 million rows of output into your terminal, you might only report once every 1000 records. Or you could have a progress bar.&lt;/p&gt;
+
+&lt;p&gt;Once I wrote a tool that reported &lt;code&gt;.&lt;/code&gt; or &lt;code&gt;^&lt;/code&gt; depending on what was done with the record. Screenfuls and screenfuls.&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; Dearest authors of command-line tools: please keep the output short and to-the-point. In fact, it&amp;rsquo;s best to only print when things go wrong. – &lt;a href=&#34;https://twitter.com/enneff/status/537572707731128320&#34;&gt;Andrew Gerrand&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A better alternative would be to accept a signal, e.g. &lt;code&gt;SIGINFO&lt;/code&gt;, and only report progress when that particular signal is received.&lt;/p&gt;
+
+&lt;p&gt;Some terminals translate ctrl-t into a &lt;code&gt;SIGINFO&lt;/code&gt;, which means that you don&amp;rsquo;t even have to figure out what process id to send the signal to.&lt;/p&gt;
+
+&lt;p&gt;If ctrl-t doesn&amp;rsquo;t work on your system, then you can always get the process id with &lt;code&gt;ps&lt;/code&gt;, and send the signal manually.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;kill -SIGINFO 68917
+Processed up to: 81
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, you could use &lt;code&gt;os.Getpid()&lt;/code&gt; to get the program to report its own process id on startup, though that kind of defeats the purpose.&lt;/p&gt;
+
+&lt;p&gt;The standard library has fine-grained support for giving your program access to the signals that you&amp;rsquo;re interested. Check out &lt;code&gt;go doc signal.Notify&lt;/code&gt; and &lt;code&gt;go doc syscall.Siginfo&lt;/code&gt; for more information.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a sample program that puts it all together.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package main
+
+import (
+        &amp;quot;fmt&amp;quot;
+        &amp;quot;os&amp;quot;
+        &amp;quot;os/signal&amp;quot;
+        &amp;quot;syscall&amp;quot;
+        &amp;quot;time&amp;quot;
+)
+
+func main() {
+        var i uint64 = 0
+
+        sigs := make(chan os.Signal, 1)
+        signal.Notify(sigs, syscall.SIGINFO)
+        go func() {
+                for {
+                        &amp;amp;lt;-sigs
+                        fmt.Printf(&amp;quot;Processed up to: %dn&amp;quot;, atomic.LoadUint64(&amp;amp;amp;i))
+                }
+        }()
+
+        // simulate doing lots of hard work for 60 seconds
+        go func() {
+                for {
+                        atomic.AddUint64(&amp;amp;amp;i, 1)
+                        time.Sleep(500 * time.Millisecond)
+                }
+        }()
+        time.Sleep(60 * time.Second)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;1) &lt;em&gt;Yeah, sorry about that.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>3 Trivial Concurrency Exercises for the Confused Newbie Gopher</title>
+      <link>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</link>
+      <pubDate>Mon, 05 Oct 2015 11:55:51 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</guid>
+      <description>
+
+&lt;p&gt;The application is hanging and you have no idea what&amp;rsquo;s going on. You&amp;rsquo;ve watched the videos, you&amp;rsquo;ve read the documentation, and you&amp;rsquo;re &lt;em&gt;just not getting it&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re struggling to wrap your head around Go&amp;rsquo;s concurrency primitives then you are not alone.&lt;/p&gt;
+
+&lt;p&gt;The internet is &lt;a href=&#34;https://github.com/golang/go/wiki/LearnConcurrency&#34;&gt;chock-full&lt;/a&gt; of excellent resources explaining and demonstrating concurrency in Go, but if your brain is overflowing, then perhaps it&amp;rsquo;s time to take a step back from the deadlocks and the race conditions, strip away real-world concerns like http and filesystems and parsing, and solve some toy problems.&lt;/p&gt;
+
+&lt;p&gt;These exercises tackle three concurrency-related problems. The basic concepts are the same whether you&amp;rsquo;re dealing with multiplexing and reverse proxies or cupcakes and zombies.&lt;/p&gt;
+
+&lt;p&gt;There are probably several correct approaches to each of these exercises, and (of course) a multitude of incorrect ones.&lt;/p&gt;
+
+&lt;h2 id=&#34;exercise-1-the-daily-walk:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
+
+&lt;p&gt;Every morning, Alice and Bob go for a walk, and being creatures of habit, they follow the same routine every day.&lt;/p&gt;
+
+&lt;p&gt;First, they both prepare, grabbing sunglasses, perhaps a belt, closing open windows, turning off ceiling fans, and pocketing their phones and keys.&lt;/p&gt;
+
+&lt;p&gt;Once they&amp;rsquo;re both ready, which typically takes each of them between 60 and 90 seconds, they arm the alarm, which has a 60 second delay.&lt;/p&gt;
+
+&lt;p&gt;While the alarm is counting down, they both put on their shoes, a process which tends to take each of them between 35 and 45 seconds.&lt;/p&gt;
+
+&lt;p&gt;Then they leave the house together and lock the door, before the alarm has finished its countdown.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate Alice and Bob&amp;rsquo;s morning routine.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s some sample output from running a solution to this problem.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Let&#39;s go for a walk!
+Bob started getting ready
+Alice started getting ready
+Alice spent 72 seconds getting ready
+Bob spent 76 seconds getting ready
+Arming alarm.
+Bob started putting on shoes
+Alarm is counting down.
+Alice started putting on shoes
+Alice spent 37 seconds putting on shoes
+Bob spent 39 seconds putting on shoes
+Exiting and locking the door.
+Alarm is armed.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;exercise-2-eating-tapas:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
+
+&lt;p&gt;Four friends are having dinner together. They ordered five dishes to share, each of which consists of between 5 and 10 morsels.&lt;/p&gt;
+
+&lt;p&gt;They eat leisurely, spending between 30 seconds and 3 minutes eating each morsel.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate the meal.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Running the program might look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Bon appétit!
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Dave is enjoying some croquetas
+Alice is enjoying some patatas bravas
+Charlie is enjoying some chorizo
+Dave is enjoying some chopitos
+Alice is enjoying some pimientos de padrón
+Bob is enjoying some croquetas
+Dave is enjoying some patatas bravas
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Alice is enjoying some croquetas
+Bob is enjoying some patatas bravas
+Dave is enjoying some chorizo
+Charlie is enjoying some chopitos
+Alice is enjoying some pimientos de padrón
+Dave is enjoying some patatas bravas
+Charlie is enjoying some croquetas
+Bob is enjoying some chorizo
+Alice is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Charlie is enjoying some patatas bravas
+Dave is enjoying some croquetas
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Bob is enjoying some pimientos de padrón
+Charlie is enjoying some patatas bravas
+Alice is enjoying some chopitos
+Dave is enjoying some patatas bravas
+Charlie is enjoying some chopitos
+Alice is enjoying some patatas bravas
+Bob is enjoying some patatas bravas
+Dave is enjoying some patatas bravas
+That was delicious!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;exercise-3-internet-café:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
+
+&lt;p&gt;A small internet café in a village just outside of Manilla has 8 computers, which are available on a first-come first-serve basis. When all the computers are taken, the next person in line has to wait until a computer frees up.&lt;/p&gt;
+
+&lt;p&gt;This morning several groups of tourists, 25 people in all, are waiting when the doors open.&lt;/p&gt;
+
+&lt;p&gt;Each person spends between 15 minutes and 2 hours online.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate the computer usage at the café&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Sample output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Tourist 4 is online.
+Tourist 25 is online.
+Tourist 9 is online.
+Tourist 15 is online.
+Tourist 1 is online.
+Tourist 16 is online.
+Tourist 2 is online.
+Tourist 5 is online.
+Tourist 17 waiting for turn.
+Tourist 6 waiting for turn.
+Tourist 3 waiting for turn.
+Tourist 18 waiting for turn.
+Tourist 7 waiting for turn.
+Tourist 12 waiting for turn.
+Tourist 13 waiting for turn.
+Tourist 10 waiting for turn.
+Tourist 19 waiting for turn.
+Tourist 14 waiting for turn.
+Tourist 11 waiting for turn.
+Tourist 20 waiting for turn.
+Tourist 22 waiting for turn.
+Tourist 23 waiting for turn.
+Tourist 24 waiting for turn.
+Tourist 8 waiting for turn.
+Tourist 21 waiting for turn.
+Tourist 2 is done, having spent 15 minutes online.
+Tourist 17 is online.
+Tourist 5 is done, having spent 18 minutes online.
+Tourist 6 is online.
+Tourist 15 is done, having spent 40 minutes online.
+Tourist 3 is online.
+Tourist 16 is done, having spent 41 minutes online.
+Tourist 18 is online.
+Tourist 6 is done, having spent 40 minutes online.
+Tourist 7 is online.
+Tourist 4 is done, having spent 60 minutes online.
+Tourist 12 is online.
+Tourist 17 is done, having spent 64 minutes online.
+Tourist 13 is online.
+Tourist 1 is done, having spent 88 minutes online.
+Tourist 10 is online.
+Tourist 9 is done, having spent 100 minutes online.
+Tourist 19 is online.
+Tourist 25 is done, having spent 114 minutes online.
+Tourist 14 is online.
+Tourist 19 is done, having spent 24 minutes online.
+Tourist 11 is online.
+Tourist 7 is done, having spent 88 minutes online.
+Tourist 20 is online.
+Tourist 18 is done, having spent 107 minutes online.
+Tourist 22 is online.
+Tourist 3 is done, having spent 110 minutes online.
+Tourist 23 is online.
+Tourist 12 is done, having spent 100 minutes online.
+Tourist 24 is online.
+Tourist 13 is done, having spent 87 minutes online.
+Tourist 8 is online.
+Tourist 20 is done, having spent 26 minutes online.
+Tourist 21 is online.
+Tourist 11 is done, having spent 65 minutes online.
+Tourist 24 is done, having spent 32 minutes online.
+Tourist 8 is done, having spent 28 minutes online.
+Tourist 10 is done, having spent 110 minutes online.
+Tourist 23 is done, having spent 57 minutes online.
+Tourist 14 is done, having spent 98 minutes online.
+Tourist 22 is done, having spent 106 minutes online.
+Tourist 21 is done, having spent 111 minutes online.
+The place is empty, let&#39;s close up and go to the beach!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;notes:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Notes&lt;/h2&gt;
+
+&lt;p&gt;Use &lt;code&gt;time.Sleep()&lt;/code&gt; to simulate delays and activities.&lt;/p&gt;
+
+&lt;p&gt;Remember to seed math/rand so that people&amp;rsquo;s activities (eating morsels and putting on shoes) take different amounts of time each time you run the code.&lt;/p&gt;
+
+&lt;p&gt;The exercises were inspired by William Kennedy&amp;rsquo;s post &lt;a href=&#34;http://www.goinggo.net/2014/02/the-nature-of-channels-in-go.html&#34;&gt;The Nature Of Channels In Go&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;stuck:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Stuck?&lt;/h2&gt;
+
+&lt;p&gt;If you get stuck, ask for help on &lt;a href=&#34;irc:irc.freenode.net/go-nuts&#34;&gt;IRC&lt;/a&gt; or &lt;a href=&#34;http://blog.gopheracademy.com/gophers-slack-community/&#34;&gt;Slack&lt;/a&gt;, or try the &lt;a href=&#34;https://forum.golangbridge.org/&#34;&gt;Go Forum at GolangBridge&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Run a `godoc` Server Locally to See Documentation for Unpublished Packages</title>
+      <link>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
+      <pubDate>Sat, 03 Oct 2015 11:52:34 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
+      <description>&lt;p&gt;Gophers care a lot about documentation and people appreciate it immensely when you have a great overview, succinct summaries, great examples, and helpful details about gotchas.&lt;/p&gt;
+
+&lt;p&gt;Often it&amp;rsquo;s only after publishing a library and then perusing the generated documentation on &lt;a href=&#34;https://godoc.org/&#34;&gt;godoc.org&lt;/a&gt; that you start seeing the missing bits and pieces. Typos jump out. Awkward phrases make you want to cringe. You realize that you really need a good example for that one core function.&lt;/p&gt;
+
+&lt;p&gt;The publish–review–fix–republish cycle can be pretty tedious, and it makes for a noisy commit log.&lt;/p&gt;
+
+&lt;p&gt;A great way to short-circuit this cycle is to run a godoc server locally so that you can click around the documentation for your project in your own browser.&lt;/p&gt;
+
+&lt;p&gt;Pick a port to run the server on, say 6060, and start it with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can browse all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;. You don&amp;rsquo;t have to restart the server to get the changes when you edit a doc comment, just save the file and refresh the page in the browser.&lt;/p&gt;
+
+&lt;p&gt;For more about documenting your projects, check out the article &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;Godoc: Documenting Go Code&lt;/a&gt; by Andrew Gerrand on the official Go blog.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Customizing the Usage String for your Command-Line Tool with the `flag` Package</title>
+      <link>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
+      <pubDate>Fri, 02 Oct 2015 11:49:41 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
+      <description>
+
+&lt;p&gt;The default usage message that ships with the &lt;code&gt;flag&lt;/code&gt; package in Go&amp;rsquo;s standard library is very simple, listing the name of the program along with all the flags that are defined, ordering the flags lexicographically.&lt;/p&gt;
+
+&lt;p&gt;While in most cases simple is exactly what you need, sometimes your CLI needs a bit of personal flair.&lt;/p&gt;
+
+&lt;p&gt;The usage function on the &lt;code&gt;flag&lt;/code&gt; package is defined as an exported variable, which allows you to override it.&lt;/p&gt;
+
+&lt;p&gt;There are two simple ways to override the variable:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;redefine the flag.Usage inline&lt;/li&gt;
+&lt;li&gt;point flag.Usage to a custom function&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
+
+&lt;p&gt;You can override the Usage variable by defining an unnamed function and assigning it to &lt;code&gt;flag.Usage&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = func() {
+        // ...
+    }
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
+
+&lt;p&gt;If the custom definition is long or complex, you may want to define it as a separate function so you don&amp;rsquo;t clutter up your &lt;code&gt;main&lt;/code&gt;. You can then point &lt;code&gt;flag.Usage&lt;/code&gt; to the custom function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = usage
+
+    // ...
+}
+
+func usage() {
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Refer to the Documentation&lt;/h2&gt;
+
+&lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you just want to change the header, there&amp;rsquo;s not much to it. If you also want to change how the flags are displayed, then take a look at the documentation for &lt;code&gt;flag.PrintDefaults&lt;/code&gt; and &lt;code&gt;flag.VisitAll&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
+      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
+      <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
+      <description>
+
+&lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve even seen scores of 0%, when clearly there is code being exercised. It&amp;rsquo;s just that the code happens to live in other packages within the project.&lt;/p&gt;
+
+&lt;p&gt;Because these tests tie so many things together, what you really want to know is much of the &lt;em&gt;entire&lt;/em&gt; codebase is exercised when they are run.&lt;/p&gt;
+
+&lt;p&gt;To illustrate, &lt;a href=&#34;https://github.com/kytrinyx/fish&#34;&gt;fish&lt;/a&gt; is a small, somewhat whimsical command-line application, that provides random fish-ascii art.&lt;/p&gt;
+
+&lt;p&gt;It takes a &lt;code&gt;-msg&lt;/code&gt; flag, and outputs a fish that swims and talks.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go run main.go -msg=&amp;quot;Lovely day for a swim&amp;quot; ./...
+
+          o˚• Lovely day for a swim .o.˚
+&amp;gt;&amp;lt;«««º&amp;gt; ·°
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In addition to main, there are two packages: &lt;code&gt;bubbles&lt;/code&gt; and &lt;code&gt;fish&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.
+├── bubbles
+│   └── bubbles.go
+├── fish
+│   └── fish.go
+├── main.go
+└── main_test.go
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
+
+&lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -cover
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That seems low. We can get some statistics about exactly what was exercised by the tests by using the &lt;code&gt;-coverprofile&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverprofile=cover.out
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.024s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the go tool we can take a closer look at those stats.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go tool cover -func=cover.out
+github.com/kytrinyx/fish/main.go:16:    main        0.0%
+github.com/kytrinyx/fish/main.go:23:    Doodle      100.0%
+total:                  (statements)    33.3%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Main is essentially a one-liner, and doesn&amp;rsquo;t need to be tested. Doodle is also a one-liner, so 100% test coverage makes sense. But Doodle calls fish, which in turn calls bubbles, and we&amp;rsquo;re not seeing any stats for either of those packages.&lt;/p&gt;
+
+&lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
+
+&lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./...
+PASS
+coverage: 81.0% of statements in ./...
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;81% is excellent test coverage. Let&amp;rsquo;s see what&amp;rsquo;s included.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./... -coverprofile=cover.out
+go tool cover -func=cover.out
+
+github.com/kytrinyx/fish/bubbles/bubbles.go:21: New     66.7%
+github.com/kytrinyx/fish/bubbles/bubbles.go:29: Embellish   100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:34: Blub        100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:42: randomBubble    100.0%
+github.com/kytrinyx/fish/fish/fish.go:23:   randomBody  100.0%
+github.com/kytrinyx/fish/fish/fish.go:27:   randomEye   100.0%
+github.com/kytrinyx/fish/fish/fish.go:31:   randomFin   100.0%
+github.com/kytrinyx/fish/fish/fish.go:36:   New     66.7%
+github.com/kytrinyx/fish/fish/fish.go:47:   Say     100.0%
+github.com/kytrinyx/fish/main.go:16:        main        0.0%
+github.com/kytrinyx/fish/main.go:23:        Doodle      100.0%
+total:                      (statements)    81.0%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It turns out the only things that are not covered are main (0%), bubbles.New (67%), and fish.New (67%).&lt;/p&gt;
+
+&lt;p&gt;That seems perfectly acceptable.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
+      <link>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
+      <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
+      <description>
+
+&lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t just a &lt;em&gt;to-may-to to-mah-to&lt;/em&gt; kind of thing. All of these concepts are related.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc—the web server&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;godoc&lt;/code&gt; tool is intended primarily to run a documentation server in your browser on &lt;a href=&#34;http://localhost:6060/pkg/&#34;&gt;localhost&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It includes the documentation for the Go standard library, along with any package that lives in your GOPATH.&lt;/p&gt;
+
+&lt;p&gt;It can also format documentation as plain text on the command-line, where you would pass the import path of the package you are interested in. This was added as an afterthought.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc golang.org/x/tools/godoc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running &lt;code&gt;godoc&lt;/code&gt; without any arguments will output the usage statement for the tool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;usage: godoc package [name ...]
+       godoc -http=:6060
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
+
+&lt;p&gt;The familiar &lt;code&gt;go&lt;/code&gt; command-line tool, which is used to &lt;code&gt;go run&lt;/code&gt; or &lt;code&gt;go build&lt;/code&gt; or &lt;code&gt;go test&lt;/code&gt;, also has a subcommand &lt;code&gt;doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;doc&lt;/code&gt; subcommand will print out the documentation for whatever argument you pass it: a package, const, func, type, var, or method.&lt;/p&gt;
+
+&lt;p&gt;Unlike the &lt;code&gt;godoc&lt;/code&gt; command, &lt;code&gt;go doc&lt;/code&gt; was intended from the start to be convenient from the command-line.&lt;/p&gt;
+
+&lt;p&gt;The most important difference between &lt;code&gt;godoc&lt;/code&gt; and &lt;code&gt;go doc&lt;/code&gt; on the command-line, is that the syntax for &lt;code&gt;go doc&lt;/code&gt; is, well, Go.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc gob.Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The equivalent command using &lt;code&gt;godoc&lt;/code&gt; is a bit more awkward, requiring the full import path:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc encoding/gob Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The default behavior of &lt;code&gt;go doc&lt;/code&gt; when calling it without arguments, is to display the documentation for the current package.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc.org—the website&lt;/h2&gt;
+
+&lt;p&gt;godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.&lt;/p&gt;
+
+&lt;p&gt;The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local &lt;code&gt;godoc&lt;/code&gt; server, but as pointed out in the comments, godoc.org doesn&amp;rsquo;t use the output from the &lt;code&gt;godoc&lt;/code&gt; tool.&lt;/p&gt;
+
+&lt;h2 id=&#34;go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go/doc—the package&lt;/h2&gt;
+
+&lt;p&gt;The command &lt;code&gt;godoc&lt;/code&gt; and the website godoc.org both rely on the package &lt;code&gt;go/doc&lt;/code&gt; to extract source code documentation.&lt;/p&gt;
+
+&lt;p&gt;If you were to use &lt;code&gt;godoc&lt;/code&gt; to ask about &lt;code&gt;go/doc&lt;/code&gt;, it would tell you all about it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ godoc go/doc
+PACKAGE DOCUMENTATION
+
+package doc
+    import &amp;quot;go/doc&amp;quot;
+
+    Package doc extracts source code documentation from a Go AST.
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;If in doubt…&lt;/h2&gt;
+
+&lt;p&gt;When people are referring to the package go/doc in casual conversation, they&amp;rsquo;ll often drop the slash. And when saying &lt;em&gt;go doc&lt;/em&gt; they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re unsure of exactly which one they mean, ask for clarification!&lt;/p&gt;
+
+&lt;h2 id=&#34;summary:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;The package &lt;code&gt;go/doc&lt;/code&gt; is used by other tools to extract the documentation comments from the AST.&lt;/p&gt;
+
+&lt;p&gt;The command-line tool &lt;code&gt;godoc&lt;/code&gt; is a web server first, and outputs plain text documentation to STDOUT as an afterthought, whereas &lt;code&gt;go doc&lt;/code&gt; is intended to be used to output documentation on the command-line.&lt;/p&gt;
+
+&lt;p&gt;The godoc.org website is the publicly searchable documentation for go packages that are not a part of the standard library.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;With thanks to Rob Pike for clarifying the reasoning behind the various tools.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

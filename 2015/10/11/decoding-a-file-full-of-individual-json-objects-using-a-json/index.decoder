@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Decoding a File Full of Individual JSON Objects using a json.Decoder &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Decoding a File Full of Individual JSON Objects using a json.Decoder</h1>
+                        <span class="li-article-taxonomies">
+                            
+
+                            
+                                with tags
+                                
+                                    <a href="http://whipperstacker.com//tags/json">json</a>
+                                
+                            
+                        </span>
+                         - 
+                        <time class="li-article-date">Sunday, October 11, 2015</time>
+                    </header>
+                    <section>
+                        <p>You can wish for a proper JSON array all you like, it&rsquo;s not going to turn your file full of JSON objects into valid JSON. It&rsquo;s not that each bit of JSON isn&rsquo;t valid, it totally is. It&rsquo;s just that you&rsquo;ve got hundreds of these JSON objects that were all dumped into the same file.</p>
+
+<p>If you&rsquo;re new to Go, you might find yourself hunting through the <code>io</code> and <code>ioutil</code> packages for a way to read a file full of JSON objects and turn them into Go structs, but these packages will only get you partway there.</p>
+
+<p>To turn a file full of distinct JSON objects into distinct Go struct values, you need two things:</p>
+
+<ol>
+<li>an <code>io.Reader</code> that doesn&rsquo;t slurp the entire file into memory at once, and</li>
+<li>a <code>json.Decoder</code>, which will let you keep reading json objects until you reach the end of the file</li>
+</ol>
+
+<p>Here&rsquo;s an example file, <code>elements.json</code>, that contains a list of JSON objects. Notice that there&rsquo;s not a square bracket in sight. In other words, this is not an array.</p>
+
+<pre><code>{&quot;symbol&quot;:&quot;S&quot;,&quot;name&quot;:&quot;Sulfur&quot;}
+{&quot;symbol&quot;:&quot;Cl&quot;,&quot;name&quot;:&quot;Chlorine&quot;}
+{&quot;symbol&quot;:&quot;K&quot;,&quot;name&quot;:&quot;Potassium&quot;}
+{&quot;symbol&quot;:&quot;Ar&quot;,&quot;name&quot;:&quot;Argon&quot;}
+{&quot;symbol&quot;:&quot;Ca&quot;,&quot;name&quot;:&quot;Calcium&quot;}
+{&quot;symbol&quot;:&quot;Sc&quot;,&quot;name&quot;:&quot;Scandium&quot;}
+{&quot;symbol&quot;:&quot;Ti&quot;,&quot;name&quot;:&quot;Titanium&quot;}
+...
+</code></pre>
+
+<p>The objects don&rsquo;t have to be separated by newlines, it would still work if the objects were all jammed together on a single line.</p>
+
+<pre><code>{&quot;symbol&quot;:&quot;S&quot;,&quot;name&quot;:&quot;Sulfur&quot;}{&quot;symbol&quot;:&quot;Cl&quot;,&quot;name&quot;:&quot;Chlorine&quot;}{&quot;symbol&quot;:&quot;K&quot;,&quot;name&quot;:&quot;Potassium&quot;}...
+</code></pre>
+
+<p>To get started, create a struct definition that you can unmarshal each object into.</p>
+
+<pre><code>type Element struct {
+    Symbol string
+    Name   string
+}
+</code></pre>
+
+<p>Get a reader for the file using <code>os.Open</code>.</p>
+
+<pre><code>f, err := os.Open(&quot;elements.json&quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer f.Close()
+</code></pre>
+
+<p>Create a decoder that reads from the open file:</p>
+
+<pre><code>dec := json.NewDecoder(f)
+</code></pre>
+
+<p>Then loop until the stream reaches the end of the file:</p>
+
+<pre><code>elements := []Element{}
+for {
+    var e Element
+    if err := dec.Decode(&amp;amp;e); err != nil {
+        if err == io.EOF {
+            break
+        }
+        log.Fatal(err)
+    }
+
+    elements = append(elements, e)
+}
+</code></pre>
+
+<p>You can also go play with the documentation for the encoding/json package in the standard library, which <a href="https://golang.org/pkg/encoding/json/#example_Decoder">includes a runnable example</a>.</p>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        Later article<br />
+                        <a href="http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher"> Tiaras &amp; Toolbelts: A Trivial Concurrency Exercise for the Confused Newbie Gopher</a>
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/10/defining-methods-pointer-receivers-and-value-receiverswhich-should-you-choose"> Defining Methods: Pointer Receivers and Value Receivers—Which Should You Choose?</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

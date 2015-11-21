@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Json on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/json/</link>
+    <description>Recent content in Json on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 11 Oct 2015 12:03:14 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/json/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Decoding a File Full of Individual JSON Objects using a json.Decoder</title>
+      <link>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</link>
+      <pubDate>Sun, 11 Oct 2015 12:03:14 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</guid>
+      <description>&lt;p&gt;You can wish for a proper JSON array all you like, it&amp;rsquo;s not going to turn your file full of JSON objects into valid JSON. It&amp;rsquo;s not that each bit of JSON isn&amp;rsquo;t valid, it totally is. It&amp;rsquo;s just that you&amp;rsquo;ve got hundreds of these JSON objects that were all dumped into the same file.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re new to Go, you might find yourself hunting through the &lt;code&gt;io&lt;/code&gt; and &lt;code&gt;ioutil&lt;/code&gt; packages for a way to read a file full of JSON objects and turn them into Go structs, but these packages will only get you partway there.&lt;/p&gt;
+
+&lt;p&gt;To turn a file full of distinct JSON objects into distinct Go struct values, you need two things:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;an &lt;code&gt;io.Reader&lt;/code&gt; that doesn&amp;rsquo;t slurp the entire file into memory at once, and&lt;/li&gt;
+&lt;li&gt;a &lt;code&gt;json.Decoder&lt;/code&gt;, which will let you keep reading json objects until you reach the end of the file&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Here&amp;rsquo;s an example file, &lt;code&gt;elements.json&lt;/code&gt;, that contains a list of JSON objects. Notice that there&amp;rsquo;s not a square bracket in sight. In other words, this is not an array.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{&amp;quot;symbol&amp;quot;:&amp;quot;S&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Sulfur&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Cl&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Chlorine&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;K&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Potassium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ar&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Argon&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ca&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Calcium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Sc&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Scandium&amp;quot;}
+{&amp;quot;symbol&amp;quot;:&amp;quot;Ti&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Titanium&amp;quot;}
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The objects don&amp;rsquo;t have to be separated by newlines, it would still work if the objects were all jammed together on a single line.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{&amp;quot;symbol&amp;quot;:&amp;quot;S&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Sulfur&amp;quot;}{&amp;quot;symbol&amp;quot;:&amp;quot;Cl&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Chlorine&amp;quot;}{&amp;quot;symbol&amp;quot;:&amp;quot;K&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;Potassium&amp;quot;}...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To get started, create a struct definition that you can unmarshal each object into.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type Element struct {
+    Symbol string
+    Name   string
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Get a reader for the file using &lt;code&gt;os.Open&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;f, err := os.Open(&amp;quot;elements.json&amp;quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer f.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Create a decoder that reads from the open file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;dec := json.NewDecoder(f)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then loop until the stream reaches the end of the file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;elements := []Element{}
+for {
+    var e Element
+    if err := dec.Decode(&amp;amp;amp;e); err != nil {
+        if err == io.EOF {
+            break
+        }
+        log.Fatal(err)
+    }
+
+    elements = append(elements, e)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also go play with the documentation for the encoding/json package in the standard library, which &lt;a href=&#34;https://golang.org/pkg/encoding/json/#example_Decoder&#34;&gt;includes a runnable example&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

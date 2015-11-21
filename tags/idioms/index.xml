@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Idioms on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/idioms/</link>
+    <description>Recent content in Idioms on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Oct 2015 12:09:52 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/idioms/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Itty Bitty Go Idiom: If Without Else</title>
+      <link>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</link>
+      <pubDate>Fri, 16 Oct 2015 12:09:52 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</guid>
+      <description>&lt;p&gt;Writing code in a new language can sometimes make you feel like an introvert at a party where you don&amp;rsquo;t know anyone, in a country where you&amp;rsquo;re not sure about the customs.&lt;/p&gt;
+
+&lt;p&gt;For the most part you&amp;rsquo;re not going to insult anyone too badly, and you&amp;rsquo;ll probably have a reasonably good time, even if occasionally people will think that you&amp;rsquo;re quaint or a bit daft or have kind of bad manners.&lt;/p&gt;
+
+&lt;p&gt;Usually the things you&amp;rsquo;re doing wrong are going to be things that never, ever occurred to you to even think about. For example, if you&amp;rsquo;re an American in France, try not to smile at strangers all the time.&lt;/p&gt;
+
+&lt;p&gt;With programming you&amp;rsquo;re probably not worried about insulting someone with outlandish habits, but you might be feeling a bit awkward and uncertain. The code works as intended, but you&amp;rsquo;re not sure if you&amp;rsquo;re doing things the right way. The Go way.&lt;/p&gt;
+
+&lt;p&gt;You will think to ask about all sorts of things: &lt;code&gt;CamelCase&lt;/code&gt; or &lt;code&gt;snake_case&lt;/code&gt; or &lt;code&gt;ALL_CAPS&lt;/code&gt;? Tabs or spaces?&lt;/p&gt;
+
+&lt;p&gt;It might never occur to you that the &lt;code&gt;if&lt;/code&gt;/&lt;code&gt;else&lt;/code&gt; that you&amp;rsquo;ve used in every single language that you&amp;rsquo;ve written code in (except that one project in SmallTalk) might be a tip-off that you&amp;rsquo;re new around these parts.&lt;/p&gt;
+
+&lt;p&gt;While it&amp;rsquo;s not considered bad practice to use &lt;code&gt;else&lt;/code&gt;, it&amp;rsquo;s actually fairly uncommon to see an &lt;code&gt;else&lt;/code&gt; or &lt;code&gt;else if&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Try to keep the normal code path at a minimal indentation, and indent the error handling, dealing with it first.
+- &lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments#indent-error-flow&#34;&gt;CodeReviewComments&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In other words, you&amp;rsquo;re going to see a lot of this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if someErrorCondition {
+    // handle the sad path
+    return
+}
+// do the happy path thing
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And not a whole lot of this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if allGood {
+  // yepp
+} else {
+  // nope
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</title>
+      <link>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
+      <pubDate>Wed, 14 Oct 2015 12:07:58 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s quite possible to run &lt;code&gt;golint&lt;/code&gt; without complaint and end up with documentation that is mediocre and unhelpful.&lt;/p&gt;
+
+&lt;p&gt;Part of the problem is that programmers coming to Go from other languages have a lot of baggage.&lt;/p&gt;
+
+&lt;p&gt;If you took Java classes in college, there&amp;rsquo;s a chance that you&amp;rsquo;ve been taught to document all your inputs and outputs for every public method. The comments end up being oh-so machine-readable, and oh-so tedious to parse with your eyes.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve been working in dynamic languages for a while, then chances are great that you&amp;rsquo;ve embraced the philosophy that comments are, at the very best, noise, and at the worst, lies. You might argue that comments are a form of duplication and that code should tell such a good story that comments become superfluous.&lt;/p&gt;
+
+&lt;p&gt;If your career has been focused on shipping code in fast-paced environments, then you&amp;rsquo;ve likely got a minimalistic and very pragmatic approach to documentation. Helping colleagues (or future you) avoid going down that rabbit hole (again!) is considered essential, but for the most part, commenting code seems like an academic exercise, not a practical concern in the real world.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re not a programmer yet and are working your way up to your first programming job, then it&amp;rsquo;s even harder. You&amp;rsquo;re stuck with the blank slate. It can be difficult to imagine what information could possibly be useful to someone later.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a comment that makes &lt;code&gt;golint&lt;/code&gt; happy, but not much else.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// IsLeapYear defines a function IsLeapYear(int) bool.
+func IsLeapYear(year int) bool {
+  // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It starts with the function name, and it&amp;rsquo;s a full, natural-language sentence, just as the &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;commentary section of Effective Go&lt;/a&gt; recommends.&lt;/p&gt;
+
+&lt;p&gt;But take a look at how this reads when looking at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc cal.IsLeapYear
+func IsLeapYear(year int) bool
+    IsLeapYear defines a function IsLeapYear(int) bool.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It practically echoes.&lt;/p&gt;
+
+&lt;p&gt;The various documentation tools in Go, &lt;a href=&#34;http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc/&#34;&gt;go doc, godoc, and godoc.org&lt;/a&gt; all display the function signature along with the doc comments.&lt;/p&gt;
+
+&lt;p&gt;A good comment is about the &lt;em&gt;function&lt;/em&gt;. A great comment will answer questions someone might have when browsing the documentation. What does the function do? Why would you want to use it? What problem does it solve? What are the gotchas?&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; Godoc comments are just good comments, the sort you would want to read even if godoc didn&amp;rsquo;t exist.&lt;/p&gt;
+
+&lt;p&gt;– &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;The Go Blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The standard library is full of great examples.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc os.Exit
+func Exit(code int)
+    Exit causes the current program to exit with the given status code.
+    Conventionally, code zero indicates success, non-zero an error. The program
+    terminates immediately; deferred functions are not run.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This comment not only tells us what the function does (&lt;em&gt;causes the current program to exit with the given status code&lt;/em&gt;), but also provides information about conventions (&lt;em&gt;code zero indicates success&lt;/em&gt;), and also important and non-obvious information (&lt;em&gt;deferred functions are not run&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;A better comment for the leap year function would note that this is valid for the Gregorian calendar. It might also mention that it&amp;rsquo;s valid for years that occurred before the Gregorian reform in 1582, but that it&amp;rsquo;s not valid for negative years (representing years numbered with BC notation).&lt;/p&gt;
+
+&lt;p&gt;It might even link to the delightful &lt;a href=&#34;https://www.youtube.com/watch?v=xX96xng7sAE&#34;&gt;4 minute video&lt;/a&gt; by CGP Gray that explains why we even have leap years.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cli on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/cli/</link>
+    <description>Recent content in Cli on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/cli/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
+      <link>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
+      <pubDate>Sun, 01 Nov 2015 12:15:26 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
+      <description>
+
+&lt;p&gt;If you&amp;rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&amp;rsquo;s a yak that is begging to be shaved.&lt;/p&gt;
+
+&lt;p&gt;The process might go something like this:&lt;/p&gt;
+
+&lt;p&gt;Step 1: Generate a pleasing color palette using something like &lt;a href=&#34;https://coolors.co&#34;&gt;Coolers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Step 2: Pick a font that isn&amp;rsquo;t embarrassing.&lt;/p&gt;
+
+&lt;p&gt;Step 3: Find the right graphics.&lt;/p&gt;
+
+&lt;p&gt;Step 4: Figure out how to incorporate the graphics into the slide deck.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s that fourth step that gets hairy.&lt;/p&gt;
+
+&lt;p&gt;That is, unless you&amp;rsquo;ve spent 10-30 hours trawling stock photography websites looking for the perfect photographs that match both your presentation topic and your color palette. In that case, then you&amp;rsquo;re probably all set.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, if what you&amp;rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&amp;rsquo;s either going to be embarrassing, or complicated.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&amp;rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.&lt;/p&gt;
+
+&lt;p&gt;An easier solution is to write a small command-line tool to do the conversion for you, and then take a screenshot of the black and white graphic on the internet and run it through your converter.&lt;/p&gt;
+
+&lt;p&gt;It turns out, it&amp;rsquo;s very, very easy to decode a PNG using the &lt;code&gt;image&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
+
+&lt;p&gt;Read the image from the filesystem.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r, err := os.Open(&amp;quot;screenshot.png&amp;quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer r.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Decode it into an &lt;code&gt;image.Image&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;img, _, err := image.Decode(r)
+if err != nil {
+    log.Fatal(err)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;img&lt;/code&gt; is a type that satisfies the &lt;code&gt;image.Image&lt;/code&gt; interface. It&amp;rsquo;s probably an &lt;code&gt;image.RGBA&lt;/code&gt; or &lt;code&gt;image.NRGBA&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Do a type conversion to access the pixel values in the PNG.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;in := m.(*image.RGBA)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then create a new image based on the old one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;out := &amp;amp;image.RGBA{
+    Pix:    make([]uint8, len(in.Pix)),
+    Stride: in.Stride,
+    Rect:   in.Rect,
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Create your new background and foreground colors. You can use hex literals for this, which makes it easy to match the hex colors that online color palettes will give you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// #2E1C2B
+bg := color.RGBA{0x2e, 0x1c, 0x2b, 0xff}
+
+// #893168
+fg := color.RGBA{0x89, 0x31, 0x68, 0xff}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A naive approach to deciding whether something is light or dark is to use the R, G, and B values in the pixel and cut everything off at half-way between 0 and 255.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;isBackground := func(c color.Color) bool {
+    rgb := c.(color.RGBA)
+    return rgb.R &amp;gt; 127 &amp;amp;&amp;amp; rgb.G &amp;gt; 127 &amp;amp;&amp;amp; rgb.B &amp;gt; 127
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can loop through and replace the existing pixels with the new values.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;max := in.Rect.Max
+for x := 0; x &amp;lt; max.X; x++ {
+    for y := 0; y &amp;lt; max.Y; y++ {
+        v := in.At(x, y)
+        if isBackground(v) {
+            out.Set(x, y, bg)
+            continue
+        }
+        out.Set(x, y, fg)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, write the result to a new file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;w, _ := os.Create(*outFile)
+defer func() {
+    if err := w.Close(); err != nil {
+        log.Fatal(err)
+    }
+}()
+
+png.Encode(w, out)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to write this yourself, take a look at the &lt;a href=&#34;https://github.com/kytrinyx/twotone&#34;&gt;twotone&lt;/a&gt; command-line tool, which adds some convenient flags for specifying background/foreground colors on the fly, as well as input and output files.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Silence Noisy Output from Command-Line Tools by Monitoring Progress with SIGINFO</title>
+      <link>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</link>
+      <pubDate>Mon, 05 Oct 2015 11:58:09 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</guid>
+      <description>&lt;p&gt;Every few weeks the team changes what data needs to be exposed in the app. Every few weeks you need to re-run the cache-warmer so that Elasticsearch has the right data, and the website can serve snappy pages without making all the slow, complicated queries on the fly.&lt;/p&gt;
+
+&lt;p&gt;Every day, the data grows, and the task is taking longer and longer to run.&lt;/p&gt;
+
+&lt;p&gt;The longer it takes, the antsier the team gets, wondering if perhaps it&amp;rsquo;s not working. Everyone recalls that one time they&lt;a href=&#34;https://twitter.com/enneff/status/537572707731128320&#34;&gt;1&lt;/a&gt; accidentally forgot to increment the counter and spent hours and hours processing the same 1000 rows over and over again.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s very, very tempting to print progress reports:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;indexed report 1
+indexed report 4
+indexed report 10
+deleted report 11
+deleted report 27
+indexed report 28
+...
+indexed report 31202381
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, if you don&amp;rsquo;t want to spew 31 million rows of output into your terminal, you might only report once every 1000 records. Or you could have a progress bar.&lt;/p&gt;
+
+&lt;p&gt;Once I wrote a tool that reported &lt;code&gt;.&lt;/code&gt; or &lt;code&gt;^&lt;/code&gt; depending on what was done with the record. Screenfuls and screenfuls.&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; Dearest authors of command-line tools: please keep the output short and to-the-point. In fact, it&amp;rsquo;s best to only print when things go wrong. – &lt;a href=&#34;https://twitter.com/enneff/status/537572707731128320&#34;&gt;Andrew Gerrand&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A better alternative would be to accept a signal, e.g. &lt;code&gt;SIGINFO&lt;/code&gt;, and only report progress when that particular signal is received.&lt;/p&gt;
+
+&lt;p&gt;Some terminals translate ctrl-t into a &lt;code&gt;SIGINFO&lt;/code&gt;, which means that you don&amp;rsquo;t even have to figure out what process id to send the signal to.&lt;/p&gt;
+
+&lt;p&gt;If ctrl-t doesn&amp;rsquo;t work on your system, then you can always get the process id with &lt;code&gt;ps&lt;/code&gt;, and send the signal manually.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;kill -SIGINFO 68917
+Processed up to: 81
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, you could use &lt;code&gt;os.Getpid()&lt;/code&gt; to get the program to report its own process id on startup, though that kind of defeats the purpose.&lt;/p&gt;
+
+&lt;p&gt;The standard library has fine-grained support for giving your program access to the signals that you&amp;rsquo;re interested. Check out &lt;code&gt;go doc signal.Notify&lt;/code&gt; and &lt;code&gt;go doc syscall.Siginfo&lt;/code&gt; for more information.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a sample program that puts it all together.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package main
+
+import (
+        &amp;quot;fmt&amp;quot;
+        &amp;quot;os&amp;quot;
+        &amp;quot;os/signal&amp;quot;
+        &amp;quot;syscall&amp;quot;
+        &amp;quot;time&amp;quot;
+)
+
+func main() {
+        var i uint64 = 0
+
+        sigs := make(chan os.Signal, 1)
+        signal.Notify(sigs, syscall.SIGINFO)
+        go func() {
+                for {
+                        &amp;amp;lt;-sigs
+                        fmt.Printf(&amp;quot;Processed up to: %dn&amp;quot;, atomic.LoadUint64(&amp;amp;amp;i))
+                }
+        }()
+
+        // simulate doing lots of hard work for 60 seconds
+        go func() {
+                for {
+                        atomic.AddUint64(&amp;amp;amp;i, 1)
+                        time.Sleep(500 * time.Millisecond)
+                }
+        }()
+        time.Sleep(60 * time.Second)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;1) &lt;em&gt;Yeah, sorry about that.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Customizing the Usage String for your Command-Line Tool with the `flag` Package</title>
+      <link>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
+      <pubDate>Fri, 02 Oct 2015 11:49:41 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
+      <description>
+
+&lt;p&gt;The default usage message that ships with the &lt;code&gt;flag&lt;/code&gt; package in Go&amp;rsquo;s standard library is very simple, listing the name of the program along with all the flags that are defined, ordering the flags lexicographically.&lt;/p&gt;
+
+&lt;p&gt;While in most cases simple is exactly what you need, sometimes your CLI needs a bit of personal flair.&lt;/p&gt;
+
+&lt;p&gt;The usage function on the &lt;code&gt;flag&lt;/code&gt; package is defined as an exported variable, which allows you to override it.&lt;/p&gt;
+
+&lt;p&gt;There are two simple ways to override the variable:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;redefine the flag.Usage inline&lt;/li&gt;
+&lt;li&gt;point flag.Usage to a custom function&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
+
+&lt;p&gt;You can override the Usage variable by defining an unnamed function and assigning it to &lt;code&gt;flag.Usage&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = func() {
+        // ...
+    }
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
+
+&lt;p&gt;If the custom definition is long or complex, you may want to define it as a separate function so you don&amp;rsquo;t clutter up your &lt;code&gt;main&lt;/code&gt;. You can then point &lt;code&gt;flag.Usage&lt;/code&gt; to the custom function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = usage
+
+    // ...
+}
+
+func usage() {
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Refer to the Documentation&lt;/h2&gt;
+
+&lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you just want to change the header, there&amp;rsquo;s not much to it. If you also want to change how the flags are displayed, then take a look at the documentation for &lt;code&gt;flag.PrintDefaults&lt;/code&gt; and &lt;code&gt;flag.VisitAll&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

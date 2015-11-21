@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Exercises on Whipperstacker</title>
+    <link>http://whipperstacker.com/categories/exercises/</link>
+    <description>Recent content in Exercises on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 13 Oct 2015 12:04:23 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/categories/exercises/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Tiaras &amp; Toolbelts: A Trivial Concurrency Exercise for the Confused Newbie Gopher</title>
+      <link>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</link>
+      <pubDate>Tue, 13 Oct 2015 12:04:23 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</guid>
+      <description>
+
+&lt;p&gt;Sometimes you wonder if the program is mocking you.&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; all goroutines are asleep&lt;/p&gt;
+
+&lt;p&gt;Asleep. That sounds wonderful. Instead, here you are wondering whether deadlock would make a good bandname, and if you have any ketchup and mayonnaise left so you can make goopy red ramen noodles. Oh, yeah. And wondering why your app is hanging.&lt;/p&gt;
+
+&lt;p&gt;Perhaps all you need is a good night&amp;rsquo;s sleep and a decent meal, and you&amp;rsquo;ll find the unclosed channel or the &lt;code&gt;WaitGroup&lt;/code&gt; that is missing a call to &lt;code&gt;Done()&lt;/code&gt;, or whatever it is this time that has you perplexed and frustrated.&lt;/p&gt;
+
+&lt;p&gt;Or, maybe, you just need a break from name servers and other computer-science-y things so you can think about concurrency in the context of toys.&lt;/p&gt;
+
+&lt;h2 id=&#34;santa-s-workers:fb2b314049b270b14ac9ea08c88a9d93&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
+
+&lt;p&gt;Kraneisha is 4 years old. This year she has asked Santa for a tiara and a toolbelt so that she can be a princess mechanic.&lt;/p&gt;
+
+&lt;p&gt;She is one of about a million children who have asked for stuff. Things. Toys. Electronics. Blinky lights and obnoxious noisemakers.&lt;/p&gt;
+
+&lt;p&gt;The Elf typing pool has been normalizing requests into a text file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Kraneisha, 4, Tiara and toolbelt
+Eddie, 8, Chemistry set
+Ty, 5, Gaming console
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Write a program to simulate Santa&amp;rsquo;s workshop&lt;/strong&gt;, where a single stream of requests gets portioned out to 1,000 elves to produce the gifts. Each completed gift is then shunted to the Wrapping Station, where they are packaged up and added to the sleigh.&lt;/p&gt;
+
+&lt;p&gt;Once all one million gifts wrapped and stowed, the sleigh can take off.&lt;/p&gt;
+
+&lt;p&gt;Don&amp;rsquo;t worry about the mechanics of fitting one million gift-wrapped toys onto a sleigh. I&amp;rsquo;m pretty sure there&amp;rsquo;s magic involved.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>3 Trivial Concurrency Exercises for the Confused Newbie Gopher</title>
+      <link>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</link>
+      <pubDate>Mon, 05 Oct 2015 11:55:51 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</guid>
+      <description>
+
+&lt;p&gt;The application is hanging and you have no idea what&amp;rsquo;s going on. You&amp;rsquo;ve watched the videos, you&amp;rsquo;ve read the documentation, and you&amp;rsquo;re &lt;em&gt;just not getting it&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re struggling to wrap your head around Go&amp;rsquo;s concurrency primitives then you are not alone.&lt;/p&gt;
+
+&lt;p&gt;The internet is &lt;a href=&#34;https://github.com/golang/go/wiki/LearnConcurrency&#34;&gt;chock-full&lt;/a&gt; of excellent resources explaining and demonstrating concurrency in Go, but if your brain is overflowing, then perhaps it&amp;rsquo;s time to take a step back from the deadlocks and the race conditions, strip away real-world concerns like http and filesystems and parsing, and solve some toy problems.&lt;/p&gt;
+
+&lt;p&gt;These exercises tackle three concurrency-related problems. The basic concepts are the same whether you&amp;rsquo;re dealing with multiplexing and reverse proxies or cupcakes and zombies.&lt;/p&gt;
+
+&lt;p&gt;There are probably several correct approaches to each of these exercises, and (of course) a multitude of incorrect ones.&lt;/p&gt;
+
+&lt;h2 id=&#34;exercise-1-the-daily-walk:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
+
+&lt;p&gt;Every morning, Alice and Bob go for a walk, and being creatures of habit, they follow the same routine every day.&lt;/p&gt;
+
+&lt;p&gt;First, they both prepare, grabbing sunglasses, perhaps a belt, closing open windows, turning off ceiling fans, and pocketing their phones and keys.&lt;/p&gt;
+
+&lt;p&gt;Once they&amp;rsquo;re both ready, which typically takes each of them between 60 and 90 seconds, they arm the alarm, which has a 60 second delay.&lt;/p&gt;
+
+&lt;p&gt;While the alarm is counting down, they both put on their shoes, a process which tends to take each of them between 35 and 45 seconds.&lt;/p&gt;
+
+&lt;p&gt;Then they leave the house together and lock the door, before the alarm has finished its countdown.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate Alice and Bob&amp;rsquo;s morning routine.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s some sample output from running a solution to this problem.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Let&#39;s go for a walk!
+Bob started getting ready
+Alice started getting ready
+Alice spent 72 seconds getting ready
+Bob spent 76 seconds getting ready
+Arming alarm.
+Bob started putting on shoes
+Alarm is counting down.
+Alice started putting on shoes
+Alice spent 37 seconds putting on shoes
+Bob spent 39 seconds putting on shoes
+Exiting and locking the door.
+Alarm is armed.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;exercise-2-eating-tapas:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
+
+&lt;p&gt;Four friends are having dinner together. They ordered five dishes to share, each of which consists of between 5 and 10 morsels.&lt;/p&gt;
+
+&lt;p&gt;They eat leisurely, spending between 30 seconds and 3 minutes eating each morsel.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate the meal.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Running the program might look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Bon appétit!
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Dave is enjoying some croquetas
+Alice is enjoying some patatas bravas
+Charlie is enjoying some chorizo
+Dave is enjoying some chopitos
+Alice is enjoying some pimientos de padrón
+Bob is enjoying some croquetas
+Dave is enjoying some patatas bravas
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Alice is enjoying some croquetas
+Bob is enjoying some patatas bravas
+Dave is enjoying some chorizo
+Charlie is enjoying some chopitos
+Alice is enjoying some pimientos de padrón
+Dave is enjoying some patatas bravas
+Charlie is enjoying some croquetas
+Bob is enjoying some chorizo
+Alice is enjoying some chopitos
+Charlie is enjoying some pimientos de padrón
+Charlie is enjoying some patatas bravas
+Dave is enjoying some croquetas
+Alice is enjoying some chorizo
+Bob is enjoying some chopitos
+Bob is enjoying some pimientos de padrón
+Charlie is enjoying some patatas bravas
+Alice is enjoying some chopitos
+Dave is enjoying some patatas bravas
+Charlie is enjoying some chopitos
+Alice is enjoying some patatas bravas
+Bob is enjoying some patatas bravas
+Dave is enjoying some patatas bravas
+That was delicious!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;exercise-3-internet-café:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
+
+&lt;p&gt;A small internet café in a village just outside of Manilla has 8 computers, which are available on a first-come first-serve basis. When all the computers are taken, the next person in line has to wait until a computer frees up.&lt;/p&gt;
+
+&lt;p&gt;This morning several groups of tourists, 25 people in all, are waiting when the doors open.&lt;/p&gt;
+
+&lt;p&gt;Each person spends between 15 minutes and 2 hours online.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Write a program to simulate the computer usage at the café&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Sample output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Tourist 4 is online.
+Tourist 25 is online.
+Tourist 9 is online.
+Tourist 15 is online.
+Tourist 1 is online.
+Tourist 16 is online.
+Tourist 2 is online.
+Tourist 5 is online.
+Tourist 17 waiting for turn.
+Tourist 6 waiting for turn.
+Tourist 3 waiting for turn.
+Tourist 18 waiting for turn.
+Tourist 7 waiting for turn.
+Tourist 12 waiting for turn.
+Tourist 13 waiting for turn.
+Tourist 10 waiting for turn.
+Tourist 19 waiting for turn.
+Tourist 14 waiting for turn.
+Tourist 11 waiting for turn.
+Tourist 20 waiting for turn.
+Tourist 22 waiting for turn.
+Tourist 23 waiting for turn.
+Tourist 24 waiting for turn.
+Tourist 8 waiting for turn.
+Tourist 21 waiting for turn.
+Tourist 2 is done, having spent 15 minutes online.
+Tourist 17 is online.
+Tourist 5 is done, having spent 18 minutes online.
+Tourist 6 is online.
+Tourist 15 is done, having spent 40 minutes online.
+Tourist 3 is online.
+Tourist 16 is done, having spent 41 minutes online.
+Tourist 18 is online.
+Tourist 6 is done, having spent 40 minutes online.
+Tourist 7 is online.
+Tourist 4 is done, having spent 60 minutes online.
+Tourist 12 is online.
+Tourist 17 is done, having spent 64 minutes online.
+Tourist 13 is online.
+Tourist 1 is done, having spent 88 minutes online.
+Tourist 10 is online.
+Tourist 9 is done, having spent 100 minutes online.
+Tourist 19 is online.
+Tourist 25 is done, having spent 114 minutes online.
+Tourist 14 is online.
+Tourist 19 is done, having spent 24 minutes online.
+Tourist 11 is online.
+Tourist 7 is done, having spent 88 minutes online.
+Tourist 20 is online.
+Tourist 18 is done, having spent 107 minutes online.
+Tourist 22 is online.
+Tourist 3 is done, having spent 110 minutes online.
+Tourist 23 is online.
+Tourist 12 is done, having spent 100 minutes online.
+Tourist 24 is online.
+Tourist 13 is done, having spent 87 minutes online.
+Tourist 8 is online.
+Tourist 20 is done, having spent 26 minutes online.
+Tourist 21 is online.
+Tourist 11 is done, having spent 65 minutes online.
+Tourist 24 is done, having spent 32 minutes online.
+Tourist 8 is done, having spent 28 minutes online.
+Tourist 10 is done, having spent 110 minutes online.
+Tourist 23 is done, having spent 57 minutes online.
+Tourist 14 is done, having spent 98 minutes online.
+Tourist 22 is done, having spent 106 minutes online.
+Tourist 21 is done, having spent 111 minutes online.
+The place is empty, let&#39;s close up and go to the beach!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;notes:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Notes&lt;/h2&gt;
+
+&lt;p&gt;Use &lt;code&gt;time.Sleep()&lt;/code&gt; to simulate delays and activities.&lt;/p&gt;
+
+&lt;p&gt;Remember to seed math/rand so that people&amp;rsquo;s activities (eating morsels and putting on shoes) take different amounts of time each time you run the code.&lt;/p&gt;
+
+&lt;p&gt;The exercises were inspired by William Kennedy&amp;rsquo;s post &lt;a href=&#34;http://www.goinggo.net/2014/02/the-nature-of-channels-in-go.html&#34;&gt;The Nature Of Channels In Go&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;stuck:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Stuck?&lt;/h2&gt;
+
+&lt;p&gt;If you get stuck, ask for help on &lt;a href=&#34;irc:irc.freenode.net/go-nuts&#34;&gt;IRC&lt;/a&gt; or &lt;a href=&#34;http://blog.gopheracademy.com/gophers-slack-community/&#34;&gt;Slack&lt;/a&gt;, or try the &lt;a href=&#34;https://forum.golangbridge.org/&#34;&gt;Go Forum at GolangBridge&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

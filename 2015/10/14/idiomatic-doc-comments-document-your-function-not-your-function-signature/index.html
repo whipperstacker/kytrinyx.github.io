@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</h1>
+                        <span class="li-article-taxonomies">
+                            
+                                Posted in
+                                
+                                    <a href="http://whipperstacker.com//categories/documentation">documentation</a>
+                                
+                            
+
+                            
+                                with tags
+                                
+                                    <a href="http://whipperstacker.com//tags/idioms">idioms</a>
+                                
+                            
+                        </span>
+                         - 
+                        <time class="li-article-date">Wednesday, October 14, 2015</time>
+                    </header>
+                    <section>
+                        <p>It&rsquo;s quite possible to run <code>golint</code> without complaint and end up with documentation that is mediocre and unhelpful.</p>
+
+<p>Part of the problem is that programmers coming to Go from other languages have a lot of baggage.</p>
+
+<p>If you took Java classes in college, there&rsquo;s a chance that you&rsquo;ve been taught to document all your inputs and outputs for every public method. The comments end up being oh-so machine-readable, and oh-so tedious to parse with your eyes.</p>
+
+<p>If you&rsquo;ve been working in dynamic languages for a while, then chances are great that you&rsquo;ve embraced the philosophy that comments are, at the very best, noise, and at the worst, lies. You might argue that comments are a form of duplication and that code should tell such a good story that comments become superfluous.</p>
+
+<p>If your career has been focused on shipping code in fast-paced environments, then you&rsquo;ve likely got a minimalistic and very pragmatic approach to documentation. Helping colleagues (or future you) avoid going down that rabbit hole (again!) is considered essential, but for the most part, commenting code seems like an academic exercise, not a practical concern in the real world.</p>
+
+<p>If you&rsquo;re not a programmer yet and are working your way up to your first programming job, then it&rsquo;s even harder. You&rsquo;re stuck with the blank slate. It can be difficult to imagine what information could possibly be useful to someone later.</p>
+
+<p>Here&rsquo;s a comment that makes <code>golint</code> happy, but not much else.</p>
+
+<pre><code>// IsLeapYear defines a function IsLeapYear(int) bool.
+func IsLeapYear(year int) bool {
+  // ...
+}
+</code></pre>
+
+<p>It starts with the function name, and it&rsquo;s a full, natural-language sentence, just as the <a href="https://golang.org/doc/effective_go.html#commentary">commentary section of Effective Go</a> recommends.</p>
+
+<p>But take a look at how this reads when looking at the output of <code>go doc</code>.</p>
+
+<pre><code>go doc cal.IsLeapYear
+func IsLeapYear(year int) bool
+    IsLeapYear defines a function IsLeapYear(int) bool.
+</code></pre>
+
+<p>It practically echoes.</p>
+
+<p>The various documentation tools in Go, <a href="http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc/">go doc, godoc, and godoc.org</a> all display the function signature along with the doc comments.</p>
+
+<p>A good comment is about the <em>function</em>. A great comment will answer questions someone might have when browsing the documentation. What does the function do? Why would you want to use it? What problem does it solve? What are the gotchas?</p>
+
+<p>&gt; Godoc comments are just good comments, the sort you would want to read even if godoc didn&rsquo;t exist.</p>
+
+<p>– <a href="http://blog.golang.org/godoc-documenting-go-code">The Go Blog</a></p>
+
+<p>The standard library is full of great examples.</p>
+
+<pre><code>go doc os.Exit
+func Exit(code int)
+    Exit causes the current program to exit with the given status code.
+    Conventionally, code zero indicates success, non-zero an error. The program
+    terminates immediately; deferred functions are not run.
+</code></pre>
+
+<p>This comment not only tells us what the function does (<em>causes the current program to exit with the given status code</em>), but also provides information about conventions (<em>code zero indicates success</em>), and also important and non-obvious information (<em>deferred functions are not run</em>).</p>
+
+<p>A better comment for the leap year function would note that this is valid for the Gregorian calendar. It might also mention that it&rsquo;s valid for years that occurred before the Gregorian reform in 1582, but that it&rsquo;s not valid for negative years (representing years numbered with BC notation).</p>
+
+<p>It might even link to the delightful <a href="https://www.youtube.com/watch?v=xX96xng7sAE">4 minute video</a> by CGP Gray that explains why we even have leap years.</p>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        Later article<br />
+                        <a href="http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else"> Itty Bitty Go Idiom: If Without Else</a>
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher"> Tiaras &amp; Toolbelts: A Trivial Concurrency Exercise for the Confused Newbie Gopher</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

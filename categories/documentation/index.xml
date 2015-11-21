@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Documentation on Whipperstacker</title>
+    <link>http://whipperstacker.com/categories/documentation/</link>
+    <description>Recent content in Documentation on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 24 Oct 2015 12:12:11 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/categories/documentation/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Browse the Go Documentation Without an Internet Connection</title>
+      <link>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
+      <pubDate>Sat, 24 Oct 2015 12:12:11 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
+      <description>&lt;p&gt;If you travel a lot (or if you live in the boondocks, like I do), then you&amp;rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.&lt;/p&gt;
+
+&lt;p&gt;To get around this, run a godoc server locally on an available port. I&amp;rsquo;ve often seen people use 6060 or 4040.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives you access to all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;: the Go standard library, as well as any other packages you may have installed.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</title>
+      <link>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
+      <pubDate>Wed, 14 Oct 2015 12:07:58 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s quite possible to run &lt;code&gt;golint&lt;/code&gt; without complaint and end up with documentation that is mediocre and unhelpful.&lt;/p&gt;
+
+&lt;p&gt;Part of the problem is that programmers coming to Go from other languages have a lot of baggage.&lt;/p&gt;
+
+&lt;p&gt;If you took Java classes in college, there&amp;rsquo;s a chance that you&amp;rsquo;ve been taught to document all your inputs and outputs for every public method. The comments end up being oh-so machine-readable, and oh-so tedious to parse with your eyes.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve been working in dynamic languages for a while, then chances are great that you&amp;rsquo;ve embraced the philosophy that comments are, at the very best, noise, and at the worst, lies. You might argue that comments are a form of duplication and that code should tell such a good story that comments become superfluous.&lt;/p&gt;
+
+&lt;p&gt;If your career has been focused on shipping code in fast-paced environments, then you&amp;rsquo;ve likely got a minimalistic and very pragmatic approach to documentation. Helping colleagues (or future you) avoid going down that rabbit hole (again!) is considered essential, but for the most part, commenting code seems like an academic exercise, not a practical concern in the real world.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re not a programmer yet and are working your way up to your first programming job, then it&amp;rsquo;s even harder. You&amp;rsquo;re stuck with the blank slate. It can be difficult to imagine what information could possibly be useful to someone later.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a comment that makes &lt;code&gt;golint&lt;/code&gt; happy, but not much else.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// IsLeapYear defines a function IsLeapYear(int) bool.
+func IsLeapYear(year int) bool {
+  // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It starts with the function name, and it&amp;rsquo;s a full, natural-language sentence, just as the &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;commentary section of Effective Go&lt;/a&gt; recommends.&lt;/p&gt;
+
+&lt;p&gt;But take a look at how this reads when looking at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc cal.IsLeapYear
+func IsLeapYear(year int) bool
+    IsLeapYear defines a function IsLeapYear(int) bool.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It practically echoes.&lt;/p&gt;
+
+&lt;p&gt;The various documentation tools in Go, &lt;a href=&#34;http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc/&#34;&gt;go doc, godoc, and godoc.org&lt;/a&gt; all display the function signature along with the doc comments.&lt;/p&gt;
+
+&lt;p&gt;A good comment is about the &lt;em&gt;function&lt;/em&gt;. A great comment will answer questions someone might have when browsing the documentation. What does the function do? Why would you want to use it? What problem does it solve? What are the gotchas?&lt;/p&gt;
+
+&lt;p&gt;&amp;gt; Godoc comments are just good comments, the sort you would want to read even if godoc didn&amp;rsquo;t exist.&lt;/p&gt;
+
+&lt;p&gt;– &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;The Go Blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The standard library is full of great examples.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc os.Exit
+func Exit(code int)
+    Exit causes the current program to exit with the given status code.
+    Conventionally, code zero indicates success, non-zero an error. The program
+    terminates immediately; deferred functions are not run.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This comment not only tells us what the function does (&lt;em&gt;causes the current program to exit with the given status code&lt;/em&gt;), but also provides information about conventions (&lt;em&gt;code zero indicates success&lt;/em&gt;), and also important and non-obvious information (&lt;em&gt;deferred functions are not run&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;A better comment for the leap year function would note that this is valid for the Gregorian calendar. It might also mention that it&amp;rsquo;s valid for years that occurred before the Gregorian reform in 1582, but that it&amp;rsquo;s not valid for negative years (representing years numbered with BC notation).&lt;/p&gt;
+
+&lt;p&gt;It might even link to the delightful &lt;a href=&#34;https://www.youtube.com/watch?v=xX96xng7sAE&#34;&gt;4 minute video&lt;/a&gt; by CGP Gray that explains why we even have leap years.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Run a `godoc` Server Locally to See Documentation for Unpublished Packages</title>
+      <link>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
+      <pubDate>Sat, 03 Oct 2015 11:52:34 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
+      <description>&lt;p&gt;Gophers care a lot about documentation and people appreciate it immensely when you have a great overview, succinct summaries, great examples, and helpful details about gotchas.&lt;/p&gt;
+
+&lt;p&gt;Often it&amp;rsquo;s only after publishing a library and then perusing the generated documentation on &lt;a href=&#34;https://godoc.org/&#34;&gt;godoc.org&lt;/a&gt; that you start seeing the missing bits and pieces. Typos jump out. Awkward phrases make you want to cringe. You realize that you really need a good example for that one core function.&lt;/p&gt;
+
+&lt;p&gt;The publish–review–fix–republish cycle can be pretty tedious, and it makes for a noisy commit log.&lt;/p&gt;
+
+&lt;p&gt;A great way to short-circuit this cycle is to run a godoc server locally so that you can click around the documentation for your project in your own browser.&lt;/p&gt;
+
+&lt;p&gt;Pick a port to run the server on, say 6060, and start it with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can browse all the installed packages at &lt;a href=&#34;http://localhost:6060/pkg&#34;&gt;localhost:6060/pkg&lt;/a&gt;. You don&amp;rsquo;t have to restart the server to get the changes when you edit a doc comment, just save the file and refresh the page in the browser.&lt;/p&gt;
+
+&lt;p&gt;For more about documenting your projects, check out the article &lt;a href=&#34;http://blog.golang.org/godoc-documenting-go-code&#34;&gt;Godoc: Documenting Go Code&lt;/a&gt; by Andrew Gerrand on the official Go blog.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
+      <link>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
+      <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
+      <description>
+
+&lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t just a &lt;em&gt;to-may-to to-mah-to&lt;/em&gt; kind of thing. All of these concepts are related.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc—the web server&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;godoc&lt;/code&gt; tool is intended primarily to run a documentation server in your browser on &lt;a href=&#34;http://localhost:6060/pkg/&#34;&gt;localhost&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It includes the documentation for the Go standard library, along with any package that lives in your GOPATH.&lt;/p&gt;
+
+&lt;p&gt;It can also format documentation as plain text on the command-line, where you would pass the import path of the package you are interested in. This was added as an afterthought.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc golang.org/x/tools/godoc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running &lt;code&gt;godoc&lt;/code&gt; without any arguments will output the usage statement for the tool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;usage: godoc package [name ...]
+       godoc -http=:6060
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
+
+&lt;p&gt;The familiar &lt;code&gt;go&lt;/code&gt; command-line tool, which is used to &lt;code&gt;go run&lt;/code&gt; or &lt;code&gt;go build&lt;/code&gt; or &lt;code&gt;go test&lt;/code&gt;, also has a subcommand &lt;code&gt;doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;doc&lt;/code&gt; subcommand will print out the documentation for whatever argument you pass it: a package, const, func, type, var, or method.&lt;/p&gt;
+
+&lt;p&gt;Unlike the &lt;code&gt;godoc&lt;/code&gt; command, &lt;code&gt;go doc&lt;/code&gt; was intended from the start to be convenient from the command-line.&lt;/p&gt;
+
+&lt;p&gt;The most important difference between &lt;code&gt;godoc&lt;/code&gt; and &lt;code&gt;go doc&lt;/code&gt; on the command-line, is that the syntax for &lt;code&gt;go doc&lt;/code&gt; is, well, Go.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc gob.Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The equivalent command using &lt;code&gt;godoc&lt;/code&gt; is a bit more awkward, requiring the full import path:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc encoding/gob Decoder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The default behavior of &lt;code&gt;go doc&lt;/code&gt; when calling it without arguments, is to display the documentation for the current package.&lt;/p&gt;
+
+&lt;h2 id=&#34;godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc.org—the website&lt;/h2&gt;
+
+&lt;p&gt;godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.&lt;/p&gt;
+
+&lt;p&gt;The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local &lt;code&gt;godoc&lt;/code&gt; server, but as pointed out in the comments, godoc.org doesn&amp;rsquo;t use the output from the &lt;code&gt;godoc&lt;/code&gt; tool.&lt;/p&gt;
+
+&lt;h2 id=&#34;go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go/doc—the package&lt;/h2&gt;
+
+&lt;p&gt;The command &lt;code&gt;godoc&lt;/code&gt; and the website godoc.org both rely on the package &lt;code&gt;go/doc&lt;/code&gt; to extract source code documentation.&lt;/p&gt;
+
+&lt;p&gt;If you were to use &lt;code&gt;godoc&lt;/code&gt; to ask about &lt;code&gt;go/doc&lt;/code&gt;, it would tell you all about it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ godoc go/doc
+PACKAGE DOCUMENTATION
+
+package doc
+    import &amp;quot;go/doc&amp;quot;
+
+    Package doc extracts source code documentation from a Go AST.
+
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;If in doubt…&lt;/h2&gt;
+
+&lt;p&gt;When people are referring to the package go/doc in casual conversation, they&amp;rsquo;ll often drop the slash. And when saying &lt;em&gt;go doc&lt;/em&gt; they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re unsure of exactly which one they mean, ask for clarification!&lt;/p&gt;
+
+&lt;h2 id=&#34;summary:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;The package &lt;code&gt;go/doc&lt;/code&gt; is used by other tools to extract the documentation comments from the AST.&lt;/p&gt;
+
+&lt;p&gt;The command-line tool &lt;code&gt;godoc&lt;/code&gt; is a web server first, and outputs plain text documentation to STDOUT as an afterthought, whereas &lt;code&gt;go doc&lt;/code&gt; is intended to be used to output documentation on the command-line.&lt;/p&gt;
+
+&lt;p&gt;The godoc.org website is the publicly searchable documentation for go packages that are not a part of the standard library.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;With thanks to Rob Pike for clarifying the reasoning behind the various tools.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to View the Documentation for a Single Standard Library Function on the Command-Line</title>
+      <link>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
+      <pubDate>Tue, 29 Sep 2015 10:57:09 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
+      <description>&lt;p&gt;You know exactly which function you need to use, and you know which package it&amp;rsquo;s in, and you seem to recall that there&amp;rsquo;s a gotcha with it, but for the life of you, you just cannot remember the details.&lt;/p&gt;
+
+&lt;p&gt;Your first instinct might be to hit up a search engine: &lt;em&gt;golang filepath walk&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s fine, and it will get you what you need quickly, along with about 30,000 other results.&lt;/p&gt;
+
+&lt;p&gt;If all you want is the language documentation, though, you can get exactly what you need right on the command-line.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc filepath.Walk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The documentation will show up right in the shell:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package filepath // import &amp;quot;path/filepath&amp;quot;
+
+func Walk(root string, walkFn WalkFunc) error
+
+    Walk walks the file tree rooted at root, calling walkFn for each file or
+    directory in the tree, including root. All errors that arise visiting files
+    and directories are filtered by walkFn. The files are walked in lexical
+    order, which makes the output deterministic but means that for very large
+    directories Walk can be inefficient. Walk does not follow symbolic links.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There&amp;rsquo;s that gotcha: It won&amp;rsquo;t follow symlinks.&lt;/p&gt;
+
+&lt;p&gt;As an added bonus, this also works with your own libraries&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go doc bubbles.Embellish
+
+package bubbles // import &amp;quot;github.com/kytrinyx/fish/bubbles&amp;quot;
+
+func Embellish(s string) string
+
+    Embellish decorates the string with ascii bubbles.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s pretty nifty!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note: the &lt;code&gt;doc&lt;/code&gt; subcommand was introduced in Go 1.5.&lt;/strong&gt; If you are using an older version of Go you can use the &lt;code&gt;godoc&lt;/code&gt; command, which takes the full import path to the package:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;godoc path/filepath Walk
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to Run the Go Tour Locally</title>
+      <link>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</link>
+      <pubDate>Sun, 27 Sep 2015 10:43:50 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</guid>
+      <description>
+
+&lt;p&gt;You decided to give Go a try. You installed the language on your Mac, you configured a &lt;code&gt;$GOPATH&lt;/code&gt;, and the internet told you that you should take the Go Tour next.&lt;/p&gt;
+
+&lt;p&gt;Pretty much everywhere they mention the tour, they also tell you that you can install it locally. So you ran the command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  go get golang.org/x/tour/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It clearly worked, because &lt;code&gt;ls $GOPATH/src/golang.org/x/tour/gotour&lt;/code&gt; has the downloaded code, but now you&amp;rsquo;re left with what feels like a silly question:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;How do you actually get it to run?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The short answer is that &lt;code&gt;go get&lt;/code&gt; installed a binary into &lt;code&gt;$GOPATH/bin&lt;/code&gt;, so you can run it with&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  $GOPATH/bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That should pop open a browser window to  and you should be all set.&lt;/p&gt;
+
+&lt;p&gt;The longer answer is that how you run it depends on your &lt;code&gt;PATH&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;path-where-programs-live:99d114c93927cc7dc1a5bcd316767ea8&#34;&gt;PATH—Where Programs Live&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;PATH&lt;/code&gt; is a list of places on your filesystem that your computer will look, if you ask it to run a program.&lt;/p&gt;
+
+&lt;p&gt;You can take a look at your &lt;code&gt;PATH&lt;/code&gt; environment variable by running the command&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  echo $PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It will look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  /Users/you/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Except it will probably be much, much longer and have some pretty gnarly looking filepaths. Each filepath is separated by a :.&lt;/p&gt;
+
+&lt;p&gt;So with the path above, if you type gotour in a terminal window, then it will look each of the locations in order, stopping (and running the command) if it finds the program:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/Users/you/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/local/go/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/local/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/bin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/sbin&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/sbin&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say that your &lt;code&gt;$GOPATH&lt;/code&gt; resolves to &lt;code&gt;/Users/you/code/go&lt;/code&gt;. This means that gotour will be installed in &lt;code&gt;/Users/you/code/go/bin&lt;/code&gt;, which is not in the list, and the computer comes up empty.&lt;/p&gt;
+
+&lt;p&gt;You&amp;rsquo;ll get some sort of message saying that the command is not found. That&amp;rsquo;s fine. You can always tell the computer exactly where to find the program by specifying the full path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  /Users/you/code/go/bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also use a relative path.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ../../../bin/gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, if you are in the same directory as the program, then you can prefix the name of the file with &lt;code&gt;./&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ./gotour
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since you are likely to run a lot of Go binaries, you might want to add &lt;code&gt;$GOPATH/bin&lt;/code&gt; to your &lt;code&gt;PATH&lt;/code&gt;. This is really handy, because it lets you run a binary from anywhere on your system without specifying where to find it, just by typing the name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  gotour
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

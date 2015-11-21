@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Testing on Whipperstacker</title>
+    <link>http://whipperstacker.com/categories/testing/</link>
+    <description>Recent content in Testing on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 01 Oct 2015 11:08:50 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/categories/testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
+      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
+      <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
+      <description>
+
+&lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve even seen scores of 0%, when clearly there is code being exercised. It&amp;rsquo;s just that the code happens to live in other packages within the project.&lt;/p&gt;
+
+&lt;p&gt;Because these tests tie so many things together, what you really want to know is much of the &lt;em&gt;entire&lt;/em&gt; codebase is exercised when they are run.&lt;/p&gt;
+
+&lt;p&gt;To illustrate, &lt;a href=&#34;https://github.com/kytrinyx/fish&#34;&gt;fish&lt;/a&gt; is a small, somewhat whimsical command-line application, that provides random fish-ascii art.&lt;/p&gt;
+
+&lt;p&gt;It takes a &lt;code&gt;-msg&lt;/code&gt; flag, and outputs a fish that swims and talks.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go run main.go -msg=&amp;quot;Lovely day for a swim&amp;quot; ./...
+
+          o˚• Lovely day for a swim .o.˚
+&amp;gt;&amp;lt;«««º&amp;gt; ·°
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In addition to main, there are two packages: &lt;code&gt;bubbles&lt;/code&gt; and &lt;code&gt;fish&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.
+├── bubbles
+│   └── bubbles.go
+├── fish
+│   └── fish.go
+├── main.go
+└── main_test.go
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
+
+&lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -cover
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That seems low. We can get some statistics about exactly what was exercised by the tests by using the &lt;code&gt;-coverprofile&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverprofile=cover.out
+PASS
+coverage: 33.3% of statements
+ok      github.com/kytrinyx/fish    0.024s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using the go tool we can take a closer look at those stats.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go tool cover -func=cover.out
+github.com/kytrinyx/fish/main.go:16:    main        0.0%
+github.com/kytrinyx/fish/main.go:23:    Doodle      100.0%
+total:                  (statements)    33.3%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Main is essentially a one-liner, and doesn&amp;rsquo;t need to be tested. Doodle is also a one-liner, so 100% test coverage makes sense. But Doodle calls fish, which in turn calls bubbles, and we&amp;rsquo;re not seeing any stats for either of those packages.&lt;/p&gt;
+
+&lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
+
+&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
+
+&lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./...
+PASS
+coverage: 81.0% of statements in ./...
+ok      github.com/kytrinyx/fish    0.021s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;81% is excellent test coverage. Let&amp;rsquo;s see what&amp;rsquo;s included.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go test -coverpkg=./... -coverprofile=cover.out
+go tool cover -func=cover.out
+
+github.com/kytrinyx/fish/bubbles/bubbles.go:21: New     66.7%
+github.com/kytrinyx/fish/bubbles/bubbles.go:29: Embellish   100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:34: Blub        100.0%
+github.com/kytrinyx/fish/bubbles/bubbles.go:42: randomBubble    100.0%
+github.com/kytrinyx/fish/fish/fish.go:23:   randomBody  100.0%
+github.com/kytrinyx/fish/fish/fish.go:27:   randomEye   100.0%
+github.com/kytrinyx/fish/fish/fish.go:31:   randomFin   100.0%
+github.com/kytrinyx/fish/fish/fish.go:36:   New     66.7%
+github.com/kytrinyx/fish/fish/fish.go:47:   Say     100.0%
+github.com/kytrinyx/fish/main.go:16:        main        0.0%
+github.com/kytrinyx/fish/main.go:23:        Doodle      100.0%
+total:                      (statements)    81.0%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It turns out the only things that are not covered are main (0%), bubbles.New (67%), and fish.New (67%).&lt;/p&gt;
+
+&lt;p&gt;That seems perfectly acceptable.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

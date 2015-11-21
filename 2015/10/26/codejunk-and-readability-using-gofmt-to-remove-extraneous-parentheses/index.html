@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</h1>
+                        <span class="li-article-taxonomies">
+                            
+
+                            
+                                with tags
+                                
+                                    <a href="http://whipperstacker.com//tags/readability">readability</a>
+                                
+                                    <a href="http://whipperstacker.com//tags/tools">tools</a>
+                                
+                            
+                        </span>
+                         - 
+                        <time class="li-article-date">Monday, October 26, 2015</time>
+                    </header>
+                    <section>
+                        <p>You start out with just the right number of parentheses: the bare minimum. Well, as few as you can get away with, without having to worry about remembering operator precedence. (<em>Does <code>||</code> bind more tightly than <code>&amp;&amp;[</code>1]?</em>)</p>
+
+<p>Then edge cases happen. You wrestle with logic, try out variations, and parentheses accrete.</p>
+
+<p>Bugfix 1, simplicity 0.</p>
+
+<p>This leaves you trying to spot the actual logical expressions amidst all the spurious parentheses.</p>
+
+<p>Noise, in other words. Codejunk[2]. Superfluous visual elements that get in the way of comprehension.</p>
+
+<p>You might think that <code>gofmt</code> will take care of it automatically, but if <code>gofmt</code> removed all the unnecessary parentheses, then readability would take a hit. We&rsquo;d all be back to remembering operator precedence[3].</p>
+
+<p>Even though <code>gofmt</code> won&rsquo;t do this automatically, the command has a flag that will let you ask it to remove extraneous parentheses: <code>-r</code>, for <em>rewrite</em>.</p>
+
+<p>Take this bit of code, observed in the wild:</p>
+
+<pre><code>func IsLeapYear(y int) bool {
+    return ((y%4) == 0 &amp;&amp; (!((y%100) == 0 &amp;&amp; (y%400) != 0)))
+}
+</code></pre>
+
+<p>Here&rsquo;s the command that will ask <code>gofmt</code> to show a diff with the extra parentheses removed:</p>
+
+<pre><code>gofmt -d -r '(a) -&amp;gt; a' .
+</code></pre>
+
+<p>Running this against the above code provides the following diff:</p>
+
+<pre><code> func IsLeapYear(y int) bool {
+-   return ((y%4) == 0 &amp;&amp; (!((y%100) == 0 &amp;&amp; (y%400) != 0)))
++   return y%4 == 0 &amp;&amp; !(y%100 == 0 &amp;&amp; y%400 != 0)
+ }
+</code></pre>
+
+<p>This is significantly easier to read. In fact, now that the logical expression is readable, it&rsquo;s possible to see that the entire thing can be further simplified.</p>
+
+<pre><code>y%4 == 0 &amp;&amp; y%100 != 0 || y%400 == 0
+</code></pre>
+
+<p>Check out <a href="http://`gofmt`" target="_blank">the gofmt documentation for details about the rewrite flag.</p>
+
+<hr />
+
+<p>1) No.
+2) A play on Edward Tufte&rsquo;s <em>Chartjunk</em>. I first heard the term codejunk from Carl Manaster in 2009.
+3) To be fair, that&rsquo;s actually <a href="https://golang.org/ref/spec#Operator_precedence">not difficult in Go</a>.</p>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        Later article<br />
+                        <a href="http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package"> Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</a>
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection"> Browse the Go Documentation Without an Internet Connection</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stdlib on Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/stdlib/</link>
+    <description>Recent content in Stdlib on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
+    <atom:link href="http://whipperstacker.com/tags/stdlib/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
+      <link>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
+      <pubDate>Sun, 01 Nov 2015 12:15:26 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
+      <description>
+
+&lt;p&gt;If you&amp;rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&amp;rsquo;s a yak that is begging to be shaved.&lt;/p&gt;
+
+&lt;p&gt;The process might go something like this:&lt;/p&gt;
+
+&lt;p&gt;Step 1: Generate a pleasing color palette using something like &lt;a href=&#34;https://coolors.co&#34;&gt;Coolers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Step 2: Pick a font that isn&amp;rsquo;t embarrassing.&lt;/p&gt;
+
+&lt;p&gt;Step 3: Find the right graphics.&lt;/p&gt;
+
+&lt;p&gt;Step 4: Figure out how to incorporate the graphics into the slide deck.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s that fourth step that gets hairy.&lt;/p&gt;
+
+&lt;p&gt;That is, unless you&amp;rsquo;ve spent 10-30 hours trawling stock photography websites looking for the perfect photographs that match both your presentation topic and your color palette. In that case, then you&amp;rsquo;re probably all set.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, if what you&amp;rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&amp;rsquo;s either going to be embarrassing, or complicated.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&amp;rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.&lt;/p&gt;
+
+&lt;p&gt;An easier solution is to write a small command-line tool to do the conversion for you, and then take a screenshot of the black and white graphic on the internet and run it through your converter.&lt;/p&gt;
+
+&lt;p&gt;It turns out, it&amp;rsquo;s very, very easy to decode a PNG using the &lt;code&gt;image&lt;/code&gt; package.&lt;/p&gt;
+
+&lt;h2 id=&#34;manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
+
+&lt;p&gt;Read the image from the filesystem.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;r, err := os.Open(&amp;quot;screenshot.png&amp;quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer r.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Decode it into an &lt;code&gt;image.Image&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;img, _, err := image.Decode(r)
+if err != nil {
+    log.Fatal(err)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;img&lt;/code&gt; is a type that satisfies the &lt;code&gt;image.Image&lt;/code&gt; interface. It&amp;rsquo;s probably an &lt;code&gt;image.RGBA&lt;/code&gt; or &lt;code&gt;image.NRGBA&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Do a type conversion to access the pixel values in the PNG.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;in := m.(*image.RGBA)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then create a new image based on the old one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;out := &amp;amp;image.RGBA{
+    Pix:    make([]uint8, len(in.Pix)),
+    Stride: in.Stride,
+    Rect:   in.Rect,
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Create your new background and foreground colors. You can use hex literals for this, which makes it easy to match the hex colors that online color palettes will give you.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// #2E1C2B
+bg := color.RGBA{0x2e, 0x1c, 0x2b, 0xff}
+
+// #893168
+fg := color.RGBA{0x89, 0x31, 0x68, 0xff}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A naive approach to deciding whether something is light or dark is to use the R, G, and B values in the pixel and cut everything off at half-way between 0 and 255.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;isBackground := func(c color.Color) bool {
+    rgb := c.(color.RGBA)
+    return rgb.R &amp;gt; 127 &amp;amp;&amp;amp; rgb.G &amp;gt; 127 &amp;amp;&amp;amp; rgb.B &amp;gt; 127
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you can loop through and replace the existing pixels with the new values.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;max := in.Rect.Max
+for x := 0; x &amp;lt; max.X; x++ {
+    for y := 0; y &amp;lt; max.Y; y++ {
+        v := in.At(x, y)
+        if isBackground(v) {
+            out.Set(x, y, bg)
+            continue
+        }
+        out.Set(x, y, fg)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, write the result to a new file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;w, _ := os.Create(*outFile)
+defer func() {
+    if err := w.Close(); err != nil {
+        log.Fatal(err)
+    }
+}()
+
+png.Encode(w, out)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to write this yourself, take a look at the &lt;a href=&#34;https://github.com/kytrinyx/twotone&#34;&gt;twotone&lt;/a&gt; command-line tool, which adds some convenient flags for specifying background/foreground colors on the fly, as well as input and output files.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Compute the Last Day of a Month using the `time` Package in the Standard Library</title>
+      <link>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</link>
+      <pubDate>Fri, 09 Oct 2015 11:59:48 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</guid>
+      <description>
+
+&lt;p&gt;If you&amp;rsquo;re having trouble finding the convenience function in Go to compute the last day of the month, it&amp;rsquo;s because it&amp;rsquo;s not there. Libraries have been written to add specialized time and date functions, but you really don&amp;rsquo;t have to reach for an external dependency.&lt;/p&gt;
+
+&lt;p&gt;Here are three ways to compute the last day of the any month using the existing functionality in the &lt;code&gt;time&lt;/code&gt; package in Go&amp;rsquo;s standard library.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-32nd-day:f4beea25695020758a2c64267c269442&#34;&gt;The 32nd Day&lt;/h2&gt;
+
+&lt;p&gt;Ian Lance Taylor suggested a trick where you get the 32nd day of the month you&amp;rsquo;re interested in, which becomes the _n_th day of the next month. Then you can subtract 32-n to get the value you&amp;rsquo;re looking for.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;32 - time.Date(2016, time.February, 32, 0, 0, 0, 0, time.UTC).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-zeroth-day:f4beea25695020758a2c64267c269442&#34;&gt;The Zeroth Day&lt;/h2&gt;
+
+&lt;p&gt;An even simpler trick, suggested by a fellow named Johnathan is to use the &amp;ldquo;zeroth&amp;rdquo; day of the following month, which by definition is the last day in the month you&amp;rsquo;re interested in.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;time.Date(2012, time.February+1, 0, 0, 0, 0, 0, time.UTC).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;a-month-less-a-day:f4beea25695020758a2c64267c269442&#34;&gt;A Month—Less a Day&lt;/h2&gt;
+
+&lt;p&gt;If you have a value of type &lt;code&gt;time.Time&lt;/code&gt; representing the first day of the month, then you can use &lt;code&gt;AddDate()&lt;/code&gt; to get the value that you want:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ts := time.Date(2008, time.February, 1, 0, 0, 0, 0, time.UTC)
+ts.AddDate(0, 1, -1).Day()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or, you could use the timestamp with either of the previous methods by accessing the month and year:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ts.Year() // 2008
+ts.Month() // 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;don-t-reach-for-that-dependency:f4beea25695020758a2c64267c269442&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
+
+&lt;p&gt;Before reaching for a 3rd party library or package, take a good look at what the standard library can offer.&lt;/p&gt;
+
+&lt;p&gt;Just because Go&amp;rsquo;s &lt;a href=&#34;https://golang.org/pkg/time/&#34;&gt;&lt;code&gt;time&lt;/code&gt; package&lt;/a&gt; doesn&amp;rsquo;t have a convenience function, doesn&amp;rsquo;t mean that it&amp;rsquo;s not convenient to use it.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Customizing the Usage String for your Command-Line Tool with the `flag` Package</title>
+      <link>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
+      <pubDate>Fri, 02 Oct 2015 11:49:41 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
+      <description>
+
+&lt;p&gt;The default usage message that ships with the &lt;code&gt;flag&lt;/code&gt; package in Go&amp;rsquo;s standard library is very simple, listing the name of the program along with all the flags that are defined, ordering the flags lexicographically.&lt;/p&gt;
+
+&lt;p&gt;While in most cases simple is exactly what you need, sometimes your CLI needs a bit of personal flair.&lt;/p&gt;
+
+&lt;p&gt;The usage function on the &lt;code&gt;flag&lt;/code&gt; package is defined as an exported variable, which allows you to override it.&lt;/p&gt;
+
+&lt;p&gt;There are two simple ways to override the variable:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;redefine the flag.Usage inline&lt;/li&gt;
+&lt;li&gt;point flag.Usage to a custom function&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
+
+&lt;p&gt;You can override the Usage variable by defining an unnamed function and assigning it to &lt;code&gt;flag.Usage&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = func() {
+        // ...
+    }
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
+
+&lt;p&gt;If the custom definition is long or complex, you may want to define it as a separate function so you don&amp;rsquo;t clutter up your &lt;code&gt;main&lt;/code&gt;. You can then point &lt;code&gt;flag.Usage&lt;/code&gt; to the custom function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    flag.Usage = usage
+
+    // ...
+}
+
+func usage() {
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Refer to the Documentation&lt;/h2&gt;
+
+&lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you just want to change the header, there&amp;rsquo;s not much to it. If you also want to change how the flags are displayed, then take a look at the documentation for &lt;code&gt;flag.PrintDefaults&lt;/code&gt; and &lt;code&gt;flag.VisitAll&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

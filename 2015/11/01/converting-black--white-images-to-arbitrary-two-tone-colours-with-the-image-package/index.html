@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</h1>
+                        <span class="li-article-taxonomies">
+                            
+
+                            
+                                with tags
+                                
+                                    <a href="http://whipperstacker.com//tags/stdlib">stdlib</a>
+                                
+                                    <a href="http://whipperstacker.com//tags/cli">cli</a>
+                                
+                            
+                        </span>
+                         - 
+                        <time class="li-article-date">Sunday, November 1, 2015</time>
+                    </header>
+                    <section>
+                        
+
+<p>If you&rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&rsquo;s a yak that is begging to be shaved.</p>
+
+<p>The process might go something like this:</p>
+
+<p>Step 1: Generate a pleasing color palette using something like <a href="https://coolors.co">Coolers</a>.</p>
+
+<p>Step 2: Pick a font that isn&rsquo;t embarrassing.</p>
+
+<p>Step 3: Find the right graphics.</p>
+
+<p>Step 4: Figure out how to incorporate the graphics into the slide deck.</p>
+
+<p>It&rsquo;s that fourth step that gets hairy.</p>
+
+<p>That is, unless you&rsquo;ve spent 10-30 hours trawling stock photography websites looking for the perfect photographs that match both your presentation topic and your color palette. In that case, then you&rsquo;re probably all set.</p>
+
+<p>On the other hand, if what you&rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&rsquo;s either going to be embarrassing, or complicated.</p>
+
+<p><img src="https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png" alt="Generated Two Tone Graphics" />
+</p>
+
+<p>Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.</p>
+
+<p>An easier solution is to write a small command-line tool to do the conversion for you, and then take a screenshot of the black and white graphic on the internet and run it through your converter.</p>
+
+<p>It turns out, it&rsquo;s very, very easy to decode a PNG using the <code>image</code> package.</p>
+
+<h2 id="manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3">Manipulating Pixels Using the Image Package</h2>
+
+<p>Read the image from the filesystem.</p>
+
+<pre><code>r, err := os.Open(&quot;screenshot.png&quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer r.Close()
+</code></pre>
+
+<p>Decode it into an <code>image.Image</code>.</p>
+
+<pre><code>img, _, err := image.Decode(r)
+if err != nil {
+    log.Fatal(err)
+}
+</code></pre>
+
+<p>The <code>img</code> is a type that satisfies the <code>image.Image</code> interface. It&rsquo;s probably an <code>image.RGBA</code> or <code>image.NRGBA</code>.</p>
+
+<p>Do a type conversion to access the pixel values in the PNG.</p>
+
+<pre><code>in := m.(*image.RGBA)
+</code></pre>
+
+<p>Then create a new image based on the old one:</p>
+
+<pre><code>out := &amp;image.RGBA{
+    Pix:    make([]uint8, len(in.Pix)),
+    Stride: in.Stride,
+    Rect:   in.Rect,
+}
+</code></pre>
+
+<p>Create your new background and foreground colors. You can use hex literals for this, which makes it easy to match the hex colors that online color palettes will give you.</p>
+
+<pre><code>// #2E1C2B
+bg := color.RGBA{0x2e, 0x1c, 0x2b, 0xff}
+
+// #893168
+fg := color.RGBA{0x89, 0x31, 0x68, 0xff}
+</code></pre>
+
+<p>A naive approach to deciding whether something is light or dark is to use the R, G, and B values in the pixel and cut everything off at half-way between 0 and 255.</p>
+
+<pre><code>isBackground := func(c color.Color) bool {
+    rgb := c.(color.RGBA)
+    return rgb.R &gt; 127 &amp;&amp; rgb.G &gt; 127 &amp;&amp; rgb.B &gt; 127
+}
+</code></pre>
+
+<p>Then you can loop through and replace the existing pixels with the new values.</p>
+
+<pre><code>max := in.Rect.Max
+for x := 0; x &lt; max.X; x++ {
+    for y := 0; y &lt; max.Y; y++ {
+        v := in.At(x, y)
+        if isBackground(v) {
+            out.Set(x, y, bg)
+            continue
+        }
+        out.Set(x, y, fg)
+    }
+}
+</code></pre>
+
+<p>Finally, write the result to a new file:</p>
+
+<pre><code>w, _ := os.Create(*outFile)
+defer func() {
+    if err := w.Close(); err != nil {
+        log.Fatal(err)
+    }
+}()
+
+png.Encode(w, out)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png" alt="Generated Two Tone Graphics" />
+</p>
+
+<p>Here&rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.</p>
+
+<p>If you don&rsquo;t want to write this yourself, take a look at the <a href="https://github.com/kytrinyx/twotone">twotone</a> command-line tool, which adds some convenient flags for specifying background/foreground colors on the fly, as well as input and output files.</p>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        &nbsp;
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses"> Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

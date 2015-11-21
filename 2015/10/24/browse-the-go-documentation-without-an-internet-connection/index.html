@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Browse the Go Documentation Without an Internet Connection &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Browse the Go Documentation Without an Internet Connection</h1>
+                        <span class="li-article-taxonomies">
+                            
+                                Posted in
+                                
+                                    <a href="http://whipperstacker.com//categories/documentation">documentation</a>
+                                
+                            
+
+                            
+                                with tags
+                                
+                                    <a href="http://whipperstacker.com//tags/tools">tools</a>
+                                
+                            
+                        </span>
+                         - 
+                        <time class="li-article-date">Saturday, October 24, 2015</time>
+                    </header>
+                    <section>
+                        <p>If you travel a lot (or if you live in the boondocks, like I do), then you&rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.</p>
+
+<p>To get around this, run a godoc server locally on an available port. I&rsquo;ve often seen people use 6060 or 4040.</p>
+
+<pre><code>godoc -http=&quot;:6060&quot;
+</code></pre>
+
+<p>This gives you access to all the installed packages at <a href="http://localhost:6060/pkg">localhost:6060/pkg</a>: the Go standard library, as well as any other packages you may have installed.</p>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        Later article<br />
+                        <a href="http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses"> Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</a>
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else"> Itty Bitty Go Idiom: If Without Else</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

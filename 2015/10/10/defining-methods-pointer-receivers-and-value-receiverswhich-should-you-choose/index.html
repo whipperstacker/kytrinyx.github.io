@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+        <title>Defining Methods: Pointer Receivers and Value Receivers—Which Should You Choose? &middot; Whipperstacker</title>
+        <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' type='text/css'>
+        <link rel="stylesheet" href="http://whipperstacker.com/libraries/normalize.3.0.1.css" />
+        <link rel="stylesheet" href="http://whipperstacker.com/css/whipperstacker.css" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-144-precomposed.png" sizes="144x144" />
+        <link rel="alternate" href="" type="application/rss+xml" title="Whipperstacker" />
+    </head>
+    <body class="li-body">
+
+<header class="li-page-header">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-brand li-left">
+                <a href="http://whipperstacker.com/">Whipperstacker</a></div>
+                <div class="li-menu li-right">
+                    <span class="li-menu-icon" onclick="javascript:toggle('menu');">&#9776;</span>
+                    <ul id="menu2" class="li-menu-items">
+                        
+                            <li><a href="/post/"> Archives </a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sixteen columns">
+                <ul id="menu" class="li-menu-items li-menu-mobile">
+                    
+                        <li><a href="/post/"> Archives </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <article class="li-article">
+                    <header class="li-article-header">
+                        <h1 class="li-article-title">Defining Methods: Pointer Receivers and Value Receivers—Which Should You Choose?</h1>
+                        <span class="li-article-taxonomies">
+                            
+
+                            
+                        </span>
+                        
+                        <time class="li-article-date">Saturday, October 10, 2015</time>
+                    </header>
+                    <section>
+                        
+
+<p>Many people are scared of pointers when they first get started in Go, especially if they&rsquo;re coming to Go from dynamic languages that don&rsquo;t expose the concept. Even after they&rsquo;ve gotten a good grasp on what pointers are and how they work, many new gophers feel a bit anxious about when they should be defining a method on a value rather than a pointer.</p>
+
+<p>The Go team has given a good set of guidelines in their <a href="https://golang.org/doc/faq#methods_on_values_or_pointers">FAQ</a>, listing three basic considerations.</p>
+
+<ol>
+<li><strong>Modification</strong>: If you need to modify the receiver, then it must be a pointer.</li>
+<li><strong>Efficiency</strong>: If your value is large, use a pointer.</li>
+<li><strong>Consistency</strong>: Don&rsquo;t mix pointer / value receivers for a given type.</li>
+</ol>
+
+<p>There are exceptions, but starting with these guidelines as a rule of thumb will get you pretty far.</p>
+
+<p>Another excellent resource when it comes to making the decision about pointer vs value receivers is the <a href="https://github.com/golang/go/wiki/CodeReviewComments#receiver-type">Code Review Comments wiki page</a> on the golang/go project on GitHub. It has a section about receiver types, which you should absolutely go read. It concludes with <em>when in doubt, use a pointer receiver</em>.</p>
+
+<h2 id="why-would-you-ever-use-a-non-pointer-receiver:d50cffd73db67296e192c311b4a1600b">Why Would You Ever Use a Non-Pointer Receiver?</h2>
+
+<p>When the receiver is a map or a slice you will almost always want to use a value receiver for these. Almost. Maps and slices act as references. <a href="http://blog.golang.org/go-slices-usage-and-internals">Go Slices: Usage and Internals</a> on the official Go blog is a fantastic deep dive into slices, and you should go read it if you haven&rsquo;t already, in order to understand why you occasionally will want to use a pointer receiver for a slice.</p>
+
+<p>Aside from types that act as references, the most common case for defining a value receiver rather than a pointer receiver is when you are defining a small struct type that acts as a value. The term <em>value</em> here might be a bit confusing, because this &ldquo;value&rdquo; is not the same &ldquo;value&rdquo; as in <em>value receiver vs. pointer receiver</em>.</p>
+
+<p>This is about identity.</p>
+
+<p>If you have two values of a given type, and all their fields have the same values in them, do they represent the same thing?</p>
+
+<p>Sometimes the answer is yes. For example, 2:15pm is 2:15pm, provided that they&rsquo;re both in the same timezone. You might have a bunch of copies of this value, each copy might live in a different place in memory, but they&rsquo;re all equivalent.</p>
+
+<p>This isn&rsquo;t always the case. For example you could have two people, both named Bob Smith, and both born on the same day. That doesn&rsquo;t mean that they&rsquo;re the same person, as anyone married to a Bob Smith can attest to. You can&rsquo;t just trade one Bob Smith for another.</p>
+
+<p>Dates, times, points, vectors, web-safe colors are all typically small, and their identity is based on their value.</p>
+
+<p>It&rsquo;s idiomatic in Go to define a value receiver rather than a pointer receiver for these types.</p>
+
+<p>Some people ask: <em>Isn&rsquo;t it always more efficient to use a pointer receiver?</em></p>
+
+<p>Two answers:</p>
+
+<ol>
+<li>Nope.</li>
+<li>You profiled, right?</li>
+</ol>
+
+<p>A pointer receiver introduces indirection. In some cases this indirection has a measurable cost.</p>
+
+<p>&gt; The problem most people have, is that they try to make this decision based on what they think the performance tradeoff will be. – William Kennedy, <a href="http://www.goinggo.net/2014/12/using-pointers-in-go.html">Using Pointers in Go</a></p>
+
+<p>It&rsquo;s far better to make choices based on what is simple and idiomatic, than on some pre-conceived idea of what will perform well.</p>
+
+<p>To quote the <a href="http://c2.com/cgi/wiki?RulesOfOptimization">Rules of Optimization</a>:</p>
+
+<ol>
+<li>The First Rule of Optimization: Don&rsquo;t.</li>
+<li>The Second Rule of Optimization: Don&rsquo;t… yet.</li>
+<li>Profile before optimizing.</li>
+</ol>
+
+                    </section>
+                </article>
+
+                <section class="subscribe">
+  <div>
+    <p>You should subscribe to my mailing list.</p>
+    <form id="subscribe-form" method="post" action="https://tinyletter.com/whipperstacker">
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" value="" placeholder=" email@example.com ">
+      <button class="button" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+
+            </div>
+        </div>
+
+        <div class="row li-pagination">
+            <div class="eight columns">
+                <div class="li-pagination-previous">
+                    
+                        Later article<br />
+                        <a href="http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder"> Decoding a File Full of Individual JSON Objects using a json.Decoder</a>
+                    
+                </div>
+            </div>
+            <div class="eight columns">
+                <div class="li-pagination-next">
+                    
+                        Older article<br />
+                        <a href="http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library"> Compute the Last Day of a Month using the `time` Package in the Standard Library</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="li-page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="sixteen columns">
+                <div class="li-page-footer-legal">
+                  &copy; 2015 Katrina Owen. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-70403679-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+    <script type="text/javascript">
+    <!--
+    function toggle(id) {
+        var e = document.getElementById(id);
+        e.style.display == 'block' ? e.style.display = 'none' : e.style.display = 'block';
+    }
+    
+    </script>
+    <script type="text/javascript">
+    <!--
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', ""]);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -->
+    </script>
+    </body>
+</html>
+

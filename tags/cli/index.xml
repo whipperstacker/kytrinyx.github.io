@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cli on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/cli/</link>
+    <link>http://kytrinyx.github.io/tags/cli/</link>
     <description>Recent content in Cli on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/tags/cli/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/tags/cli/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
-      <link>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
+      <link>http://kytrinyx.github.io/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
       <pubDate>Sun, 01 Nov 2015 12:15:26 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
+      <guid>http://kytrinyx.github.io/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
       <description>
 
 &lt;p&gt;If you&amp;rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&amp;rsquo;s a yak that is begging to be shaved.&lt;/p&gt;
@@ -134,10 +134,10 @@ png.Encode(w, out)
     
     <item>
       <title>Silence Noisy Output from Command-Line Tools by Monitoring Progress with SIGINFO</title>
-      <link>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</link>
+      <link>http://kytrinyx.github.io/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</link>
       <pubDate>Mon, 05 Oct 2015 11:58:09 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</guid>
+      <guid>http://kytrinyx.github.io/2015/10/05/silence-noisy-output-from-command-line-tools-by-monitoring-progress-with-siginfo</guid>
       <description>&lt;p&gt;Every few weeks the team changes what data needs to be exposed in the app. Every few weeks you need to re-run the cache-warmer so that Elasticsearch has the right data, and the website can serve snappy pages without making all the slow, complicated queries on the fly.&lt;/p&gt;
 
 &lt;p&gt;Every day, the data grows, and the task is taking longer and longer to run.&lt;/p&gt;
@@ -217,10 +217,10 @@ func main() {
     
     <item>
       <title>Customizing the Usage String for your Command-Line Tool with the `flag` Package</title>
-      <link>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
+      <link>http://kytrinyx.github.io/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
       <pubDate>Fri, 02 Oct 2015 11:49:41 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
+      <guid>http://kytrinyx.github.io/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
       <description>
 
 &lt;p&gt;The default usage message that ships with the &lt;code&gt;flag&lt;/code&gt; package in Go&amp;rsquo;s standard library is very simple, listing the name of the program along with all the flags that are defined, ordering the flags lexicographically.&lt;/p&gt;

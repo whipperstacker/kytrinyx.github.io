@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Testing on Whipperstacker</title>
-    <link>http://whipperstacker.com/categories/testing/</link>
+    <link>http://kytrinyx.github.io/categories/testing/</link>
     <description>Recent content in Testing on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 01 Oct 2015 11:08:50 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/categories/testing/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/categories/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
-      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
+      <link>http://kytrinyx.github.io/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
       <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
+      <guid>http://kytrinyx.github.io/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
       <description>
 
 &lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;

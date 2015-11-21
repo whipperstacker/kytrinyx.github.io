@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Idioms on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/idioms/</link>
+    <link>http://kytrinyx.github.io/tags/idioms/</link>
     <description>Recent content in Idioms on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 16 Oct 2015 12:09:52 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/tags/idioms/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/tags/idioms/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Itty Bitty Go Idiom: If Without Else</title>
-      <link>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</link>
+      <link>http://kytrinyx.github.io/2015/10/16/itty-bitty-go-idiom-if-without-else</link>
       <pubDate>Fri, 16 Oct 2015 12:09:52 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/16/itty-bitty-go-idiom-if-without-else</guid>
+      <guid>http://kytrinyx.github.io/2015/10/16/itty-bitty-go-idiom-if-without-else</guid>
       <description>&lt;p&gt;Writing code in a new language can sometimes make you feel like an introvert at a party where you don&amp;rsquo;t know anyone, in a country where you&amp;rsquo;re not sure about the customs.&lt;/p&gt;
 
 &lt;p&gt;For the most part you&amp;rsquo;re not going to insult anyone too badly, and you&amp;rsquo;ll probably have a reasonably good time, even if occasionally people will think that you&amp;rsquo;re quaint or a bit daft or have kind of bad manners.&lt;/p&gt;
@@ -56,10 +56,10 @@
     
     <item>
       <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</title>
-      <link>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
+      <link>http://kytrinyx.github.io/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
       <pubDate>Wed, 14 Oct 2015 12:07:58 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
+      <guid>http://kytrinyx.github.io/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
       <description>&lt;p&gt;It&amp;rsquo;s quite possible to run &lt;code&gt;golint&lt;/code&gt; without complaint and end up with documentation that is mediocre and unhelpful.&lt;/p&gt;
 
 &lt;p&gt;Part of the problem is that programmers coming to Go from other languages have a lot of baggage.&lt;/p&gt;

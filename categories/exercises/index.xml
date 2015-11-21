@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Exercises on Whipperstacker</title>
-    <link>http://whipperstacker.com/categories/exercises/</link>
+    <link>http://kytrinyx.github.io/categories/exercises/</link>
     <description>Recent content in Exercises on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 13 Oct 2015 12:04:23 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/categories/exercises/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/categories/exercises/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tiaras &amp; Toolbelts: A Trivial Concurrency Exercise for the Confused Newbie Gopher</title>
-      <link>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</link>
+      <link>http://kytrinyx.github.io/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</link>
       <pubDate>Tue, 13 Oct 2015 12:04:23 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</guid>
+      <guid>http://kytrinyx.github.io/2015/10/13/tiaras--toolbelts-a-trivial-concurrency-exercise-for-the-confused-newbie-gopher</guid>
       <description>
 
 &lt;p&gt;Sometimes you wonder if the program is mocking you.&lt;/p&gt;
@@ -51,10 +51,10 @@ Ty, 5, Gaming console
     
     <item>
       <title>3 Trivial Concurrency Exercises for the Confused Newbie Gopher</title>
-      <link>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</link>
+      <link>http://kytrinyx.github.io/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</link>
       <pubDate>Mon, 05 Oct 2015 11:55:51 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</guid>
+      <guid>http://kytrinyx.github.io/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher</guid>
       <description>
 
 &lt;p&gt;The application is hanging and you have no idea what&amp;rsquo;s going on. You&amp;rsquo;ve watched the videos, you&amp;rsquo;ve read the documentation, and you&amp;rsquo;re &lt;em&gt;just not getting it&lt;/em&gt;.&lt;/p&gt;

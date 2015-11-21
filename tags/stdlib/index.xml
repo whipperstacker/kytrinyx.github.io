@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Stdlib on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/stdlib/</link>
+    <link>http://kytrinyx.github.io/tags/stdlib/</link>
     <description>Recent content in Stdlib on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/tags/stdlib/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/tags/stdlib/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
-      <link>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
+      <link>http://kytrinyx.github.io/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</link>
       <pubDate>Sun, 01 Nov 2015 12:15:26 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
+      <guid>http://kytrinyx.github.io/2015/11/01/converting-black--white-images-to-arbitrary-two-tone-colours-with-the-image-package</guid>
       <description>
 
 &lt;p&gt;If you&amp;rsquo;re practically illiterate when it comes to colors and graphics (as I am), and you need to create a presentation that is not going to make the audience cringe, then there&amp;rsquo;s a yak that is begging to be shaved.&lt;/p&gt;
@@ -134,10 +134,10 @@ png.Encode(w, out)
     
     <item>
       <title>Compute the Last Day of a Month using the `time` Package in the Standard Library</title>
-      <link>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</link>
+      <link>http://kytrinyx.github.io/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</link>
       <pubDate>Fri, 09 Oct 2015 11:59:48 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</guid>
+      <guid>http://kytrinyx.github.io/2015/10/09/compute-the-last-day-of-a-month-using-the-time-package-in-the-standard-library</guid>
       <description>
 
 &lt;p&gt;If you&amp;rsquo;re having trouble finding the convenience function in Go to compute the last day of the month, it&amp;rsquo;s because it&amp;rsquo;s not there. Libraries have been written to add specialized time and date functions, but you really don&amp;rsquo;t have to reach for an external dependency.&lt;/p&gt;
@@ -182,10 +182,10 @@ ts.Month() // 2
     
     <item>
       <title>Customizing the Usage String for your Command-Line Tool with the `flag` Package</title>
-      <link>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
+      <link>http://kytrinyx.github.io/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</link>
       <pubDate>Fri, 02 Oct 2015 11:49:41 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
+      <guid>http://kytrinyx.github.io/2015/10/02/customizing-the-usage-string-for-your-command-line-tool-with-the-flag-package</guid>
       <description>
 
 &lt;p&gt;The default usage message that ships with the &lt;code&gt;flag&lt;/code&gt; package in Go&amp;rsquo;s standard library is very simple, listing the name of the program along with all the flags that are defined, ordering the flags lexicographically.&lt;/p&gt;

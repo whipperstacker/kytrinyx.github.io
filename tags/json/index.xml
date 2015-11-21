@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Json on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/json/</link>
+    <link>http://kytrinyx.github.io/tags/json/</link>
     <description>Recent content in Json on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 11 Oct 2015 12:03:14 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/tags/json/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/tags/json/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Decoding a File Full of Individual JSON Objects using a json.Decoder</title>
-      <link>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</link>
+      <link>http://kytrinyx.github.io/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</link>
       <pubDate>Sun, 11 Oct 2015 12:03:14 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</guid>
+      <guid>http://kytrinyx.github.io/2015/10/11/decoding-a-file-full-of-individual-json-objects-using-a-json.decoder</guid>
       <description>&lt;p&gt;You can wish for a proper JSON array all you like, it&amp;rsquo;s not going to turn your file full of JSON objects into valid JSON. It&amp;rsquo;s not that each bit of JSON isn&amp;rsquo;t valid, it totally is. It&amp;rsquo;s just that you&amp;rsquo;ve got hundreds of these JSON objects that were all dumped into the same file.&lt;/p&gt;
 
 &lt;p&gt;If you&amp;rsquo;re new to Go, you might find yourself hunting through the &lt;code&gt;io&lt;/code&gt; and &lt;code&gt;ioutil&lt;/code&gt; packages for a way to read a file full of JSON objects and turn them into Go structs, but these packages will only get you partway there.&lt;/p&gt;

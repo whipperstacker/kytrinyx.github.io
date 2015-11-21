@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tools on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/tools/</link>
+    <link>http://kytrinyx.github.io/tags/tools/</link>
     <description>Recent content in Tools on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 26 Oct 2015 12:13:34 -0700</lastBuildDate>
-    <atom:link href="http://whipperstacker.com/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://kytrinyx.github.io/tags/tools/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Codejunk and Readability: Using `gofmt` to Remove Extraneous Parentheses</title>
-      <link>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</link>
+      <link>http://kytrinyx.github.io/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</link>
       <pubDate>Mon, 26 Oct 2015 12:13:34 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</guid>
+      <guid>http://kytrinyx.github.io/2015/10/26/codejunk-and-readability-using-gofmt-to-remove-extraneous-parentheses</guid>
       <description>&lt;p&gt;You start out with just the right number of parentheses: the bare minimum. Well, as few as you can get away with, without having to worry about remembering operator precedence. (&lt;em&gt;Does &lt;code&gt;||&lt;/code&gt; bind more tightly than &lt;code&gt;&amp;amp;&amp;amp;[&lt;/code&gt;1]?&lt;/em&gt;)&lt;/p&gt;
 
 &lt;p&gt;Then edge cases happen. You wrestle with logic, try out variations, and parentheses accrete.&lt;/p&gt;
@@ -66,10 +66,10 @@
     
     <item>
       <title>Browse the Go Documentation Without an Internet Connection</title>
-      <link>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
+      <link>http://kytrinyx.github.io/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
       <pubDate>Sat, 24 Oct 2015 12:12:11 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
+      <guid>http://kytrinyx.github.io/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
       <description>&lt;p&gt;If you travel a lot (or if you live in the boondocks, like I do), then you&amp;rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.&lt;/p&gt;
 
 &lt;p&gt;To get around this, run a godoc server locally on an available port. I&amp;rsquo;ve often seen people use 6060 or 4040.&lt;/p&gt;
@@ -83,10 +83,10 @@
     
     <item>
       <title>Run a `godoc` Server Locally to See Documentation for Unpublished Packages</title>
-      <link>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
+      <link>http://kytrinyx.github.io/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
       <pubDate>Sat, 03 Oct 2015 11:52:34 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
+      <guid>http://kytrinyx.github.io/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
       <description>&lt;p&gt;Gophers care a lot about documentation and people appreciate it immensely when you have a great overview, succinct summaries, great examples, and helpful details about gotchas.&lt;/p&gt;
 
 &lt;p&gt;Often it&amp;rsquo;s only after publishing a library and then perusing the generated documentation on &lt;a href=&#34;https://godoc.org/&#34;&gt;godoc.org&lt;/a&gt; that you start seeing the missing bits and pieces. Typos jump out. Awkward phrases make you want to cringe. You realize that you really need a good example for that one core function.&lt;/p&gt;
@@ -108,10 +108,10 @@
     
     <item>
       <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
-      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
+      <link>http://kytrinyx.github.io/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
       <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
+      <guid>http://kytrinyx.github.io/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
       <description>
 
 &lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;
@@ -210,10 +210,10 @@ total:                      (statements)    81.0%
     
     <item>
       <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
-      <link>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
+      <link>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
       <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
+      <guid>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
       <description>
 
 &lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
@@ -305,10 +305,10 @@ package doc
     
     <item>
       <title>How to View the Documentation for a Single Standard Library Function on the Command-Line</title>
-      <link>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
+      <link>http://kytrinyx.github.io/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
       <pubDate>Tue, 29 Sep 2015 10:57:09 -0700</pubDate>
       
-      <guid>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
+      <guid>http://kytrinyx.github.io/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
       <description>&lt;p&gt;You know exactly which function you need to use, and you know which package it&amp;rsquo;s in, and you seem to recall that there&amp;rsquo;s a gotcha with it, but for the life of you, you just cannot remember the details.&lt;/p&gt;
 
 &lt;p&gt;Your first instinct might be to hit up a search engine: &lt;em&gt;golang filepath walk&lt;/em&gt;.&lt;/p&gt;

@@ -115,10 +115,10 @@ func Exit(code int)
     
     <item>
       <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
-      <link>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</link>
+      <link>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</link>
       <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-go-doc-godoc.org-and-go/docwhich-ones-which</guid>
+      <guid>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</guid>
       <description>
 
 &lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;

@@ -64,34 +64,21 @@
                     <section>
                         
 
-<p>Most tutorials assume you know a bunch of things.
-Some tutorials assume you know nothing.</p>
+<p>If you already know how to use Hugo, and you&rsquo;ve never used GitHub Pages before, and
+you just want to figure out how to get everything wired up and deployed with the least
+amount of fuss necessary, then a lot of the blog posts and tutorials you&rsquo;ll find are
+going to be a bit frustrating.</p>
 
-<p>Both of these extremes can be confusing, because in the first case
-you&rsquo;re left wondering &ldquo;yes, but&hellip;&rdquo; and &ldquo;how did they know to&hellip;?&rdquo;,
-whereas in the second case you find yourself wading through all the
-things that you <em>do</em> know in order to extract the things that you
-<em>don&rsquo;t</em>.</p>
+<p>Some tutorials will explain the GitHub Pages part in detail, but will make assumptions
+about how you&rsquo;re generating your site, which won&rsquo;t necessarily match what Hugo does.</p>
 
-<h2 id="can-i-use-hugo-with-github-pages:51d0e65fe45d4368429dafddfca3e5cc">&ldquo;Can I Use Hugo With GitHub Pages?&rdquo;</h2>
+<p>Other tutorials will assume that you know <em>nothing</em>, and will explain every step of
+everything from scratch.</p>
 
-<p>The simple answer is &ldquo;Yes!&rdquo;. Absolutely.</p>
+<p>This post assumes that you know what all the pieces are (hugo, repositories, a bit of DNS),
+and you just want to figure out the easiest way to stitch it all together.</p>
 
-<p>A better answer would be: &ldquo;Let&rsquo;s talk about this for a second.&rdquo;</p>
-
-<p>The question suggests that all the tutorials and blogposts that you&rsquo;ve
-come across up until now may have forgotten to mention a very important
-point: GitHub Pages hosts static websites.</p>
-
-<p>You can make that website by hand, painfully writing your HTML character
-by character, or you can generate it using a static site generator&ndash;any static
-site generator.</p>
-
-<p>So the real answer to &ldquo;Can I use X with GitHub Pages&rdquo; is &ldquo;Yes, provided
-that X generates a bunch of HTML for you.&rdquo;</p>
-
-<p>Hugo does that really well. This post doesn&rsquo;t cover how to make a blog or
-site using Hugo, since the <a href="http://gohugo.io/">Hugo</a> website does that admirably.</p>
+<p>First, a warning:</p>
 
 <h2 id="don-t-make-a-gh-pages-branch:51d0e65fe45d4368429dafddfca3e5cc">Don&rsquo;t Make a <code>gh-pages</code> Branch</h2>
 
@@ -107,21 +94,24 @@ you need when creating a stand-alone site are <em>User Pages</em> or <em>Organiz
 (which are the same thing, it just depends on if your GitHub user is a user
 or an organization).</p>
 
+<p>Ok, moving on.</p>
+
 <h2 id="a-tale-of-two-repositories:51d0e65fe45d4368429dafddfca3e5cc">A Tale of Two Repositories</h2>
 
 <p>The trick to deploying a stand-alone, hugo-generated site that will be hosted
-on a custom domain is that everything in <code>public/</code> needs to be in a repository
-named <code>&lt;username&gt;.github.io</code>, which means that all the markdown and templates
-and configuration needs to go in a separate repository. This can be named whatever
-you like. For the sake of argument, let&rsquo;s assume this repository is called <code>blog</code>.</p>
+on a custom domain is that everything within <code>public/</code> needs to be in its own
+repository, and that repository <em>must</em> be named <code>&lt;username&gt;.github.io</code>, where
+<code>&lt;username&gt;</code> is your actual GitHub username.</p>
 
-<p>Replace <code>&lt;username&gt;</code> with your own GitHub username.</p>
+<p>This means that all the markdown and templates and configuration needs to go in
+a separate repository. The repository with all the Hugo stuff can be named
+whatever you like. For the sake of argument, let&rsquo;s assume this repository is called <code>blog</code>.</p>
 
-<p>We&rsquo;ll walk through two scenarios below:</p>
+<p>The initial setup depends on what your current situation is. Most likely, either:</p>
 
 <ol>
-<li>Nothing is committed to source control yet.</li>
-<li>You already have your hugo site committed and pushed up to the <code>blog</code> repository
+<li>nothing is committed to source control yet, or</li>
+<li>you already have your hugo site committed and pushed up to the <code>blog</code> repository
 on GitHub.</li>
 </ol>
 
@@ -131,8 +121,8 @@ on GitHub.</li>
 
 <ol>
 <li><code>blog</code></li>
-<li><code>&lt;username&gt;.github.io</code> &ndash; Check the <em>Initialize this repository with a README</em> box
-(it will make the next step easier).</li>
+<li><code>&lt;username&gt;.github.io</code> Make sure to check the <em>Initialize this repository with a
+README</em> box, since that will make the next step easier.</li>
 </ol>
 
 <p>Kill your hugo server so that it stops regenerating the HTML.</p>
@@ -147,20 +137,21 @@ $ git remote add origin git@github.com:&lt;username&gt;/blog.git
 
 <h3 id="setup-when-you-ve-already-committed-and-pushed:51d0e65fe45d4368429dafddfca3e5cc">Setup When You&rsquo;ve Already Committed and Pushed</h3>
 
-<p>If you&rsquo;ve already got your hugo site committed to source control and pushed up to
-GitHub, then the process is similar, except that you need to make room for the submodule.</p>
+<p>If you&rsquo;ve already got your Hugo site committed to source control and pushed up to
+GitHub, then the process is similar, except that you need to make room for the submodule
+that you&rsquo;re going to add right after the setup is complete.</p>
 
 <p>Kill your hugo server so that it stops regenerating the HTML.</p>
 
 <p>Create a new, empty repository named <code>&lt;username&gt;.github.io</code> on GitHub, making sure
 to tick the <em>Initialize this repository with a README</em> box.</p>
 
-<p>Delete the <code>public/</code> directory:</p>
+<p>Delete the <code>public/</code> directory from git:</p>
 
 <pre><code>$ git rm -r public
 </code></pre>
 
-<h3 id="adding-the-submodule:51d0e65fe45d4368429dafddfca3e5cc">Adding The Submodule</h3>
+<h3 id="adding-the-submodule:51d0e65fe45d4368429dafddfca3e5cc">Adding the Submodule</h3>
 
 <p>Clone the <code>&lt;username&gt;.github.io</code> repo into a submodule in <code>public</code>:</p>
 
@@ -173,6 +164,8 @@ to tick the <em>Initialize this repository with a README</em> box.</p>
 $ git push -u origin master
 </code></pre>
 
+<h3 id="deploying:51d0e65fe45d4368429dafddfca3e5cc">Deploying</h3>
+
 <p>Regenerate the HTML and push the submodule up to GitHub:</p>
 
 <pre><code>$ hugo -t -theme=YOURTHEME
@@ -184,9 +177,7 @@ $ git push origin master
 
 <p>You should be able to see the index page up on <username>.github.io a few moments later.</p>
 
-<h3 id="add-a-handy-deploy-script:51d0e65fe45d4368429dafddfca3e5cc">Add a Handy Deploy Script</h3>
-
-<p>Use something like <a href="https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh">Spencer Lyon&rsquo;s script</a> to simplify deploys.</p>
+<p>Add a handy deploy script like <a href="https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh">Spencer Lyon&rsquo;s script</a> to simplify things a bit.</p>
 
 <h2 id="mapping-a-custom-domain:51d0e65fe45d4368429dafddfca3e5cc">Mapping a Custom Domain</h2>
 
@@ -201,6 +192,11 @@ or ALIAS record rather than a CNAME record.</p>
 you&rsquo;ll need either an ALIAS record on an A record. It depends on the provider.</p>
 
 <p>For more information about DNS mappings, check out the <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/">guide on GitHub</a>.</p>
+
+<h2 id="regenerating-all-the-urls:51d0e65fe45d4368429dafddfca3e5cc">Regenerating All the URLS</h2>
+
+<p>Once the DNS has propagated you&rsquo;re going to need to change the base host name in the Hugo config
+file, regenerate the site with the correct urls, and redeploy.</p>
 
                     </section>
                 </article>

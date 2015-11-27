@@ -6,8 +6,156 @@
     <description>Recent content in Posts on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2015 08:26:28 -0700</lastBuildDate>
     <atom:link href="http://kytrinyx.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Deploying a Stand-Alone Hugo Site to GitHub Pages Mapped to a Custom Domain</title>
+      <link>http://kytrinyx.github.io/2015/11/27/deploying-a-stand-alone-hugo-site-to-github-pages-mapped-to-a-custom-domain</link>
+      <pubDate>Fri, 27 Nov 2015 08:26:28 -0700</pubDate>
+      
+      <guid>http://kytrinyx.github.io/2015/11/27/deploying-a-stand-alone-hugo-site-to-github-pages-mapped-to-a-custom-domain</guid>
+      <description>
+
+&lt;p&gt;Most tutorials assume you know a bunch of things.
+Some tutorials assume you know nothing.&lt;/p&gt;
+
+&lt;p&gt;Both of these extremes can be confusing, because in the first case
+you&amp;rsquo;re left wondering &amp;ldquo;yes, but&amp;hellip;&amp;rdquo; and &amp;ldquo;how did they know to&amp;hellip;?&amp;rdquo;,
+whereas in the second case you find yourself wading through all the
+things that you &lt;em&gt;do&lt;/em&gt; know in order to extract the things that you
+&lt;em&gt;don&amp;rsquo;t&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;can-i-use-hugo-with-github-pages:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;&amp;ldquo;Can I Use Hugo With GitHub Pages?&amp;rdquo;&lt;/h2&gt;
+
+&lt;p&gt;The simple answer is &amp;ldquo;Yes!&amp;rdquo;. Absolutely.&lt;/p&gt;
+
+&lt;p&gt;A better answer would be: &amp;ldquo;Let&amp;rsquo;s talk about this for a second.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;The question suggests that all the tutorials and blogposts that you&amp;rsquo;ve
+come across up until now may have forgotten to mention a very important
+point: GitHub Pages hosts static websites.&lt;/p&gt;
+
+&lt;p&gt;You can make that website by hand, painfully writing your HTML character
+by character, or you can generate it using a static site generator&amp;ndash;any static
+site generator.&lt;/p&gt;
+
+&lt;p&gt;So the real answer to &amp;ldquo;Can I use X with GitHub Pages&amp;rdquo; is &amp;ldquo;Yes, provided
+that X generates a bunch of HTML for you.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Hugo does that really well. This post doesn&amp;rsquo;t cover how to make a blog or
+site using Hugo, since the &lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; website does that admirably.&lt;/p&gt;
+
+&lt;h2 id=&#34;don-t-make-a-gh-pages-branch:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Don&amp;rsquo;t Make a &lt;code&gt;gh-pages&lt;/code&gt; Branch&lt;/h2&gt;
+
+&lt;p&gt;A lot of the documentation you&amp;rsquo;ll find will talk about creating a branch
+called &lt;code&gt;gh-pages&lt;/code&gt; for the HTML. This is great if you&amp;rsquo;re creating a portfolio
+site with sub-sites for different projects on GitHub.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re looking to create a stand-alone site mapped to a custom domain,
+then that is not the documentation you need.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;gh-pages&lt;/code&gt; branches are what GitHub refers to as &lt;em&gt;Project Pages&lt;/em&gt;. What
+you need when creating a stand-alone site are &lt;em&gt;User Pages&lt;/em&gt; or &lt;em&gt;Organization Pages&lt;/em&gt;
+(which are the same thing, it just depends on if your GitHub user is a user
+or an organization).&lt;/p&gt;
+
+&lt;h2 id=&#34;a-tale-of-two-repositories:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;A Tale of Two Repositories&lt;/h2&gt;
+
+&lt;p&gt;The trick to deploying a stand-alone, hugo-generated site that will be hosted
+on a custom domain is that everything in &lt;code&gt;public/&lt;/code&gt; needs to be in a repository
+named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;, which means that all the markdown and templates
+and configuration needs to go in a separate repository. This can be named whatever
+you like. For the sake of argument, let&amp;rsquo;s assume this repository is called &lt;code&gt;blog&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Replace &lt;code&gt;&amp;lt;username&amp;gt;&lt;/code&gt; with your own GitHub username.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ll walk through two scenarios below:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Nothing is committed to source control yet.&lt;/li&gt;
+&lt;li&gt;You already have your hugo site committed and pushed up to the &lt;code&gt;blog&lt;/code&gt; repository
+on GitHub.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;setup-when-nothing-is-committed:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Setup When Nothing is Committed&lt;/h3&gt;
+
+&lt;p&gt;Create two new, empty repositories on GitHub:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;blog&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; &amp;ndash; Check the &lt;em&gt;Initialize this repository with a README&lt;/em&gt; box
+(it will make the next step easier).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Kill your hugo server so that it stops regenerating the HTML.&lt;/p&gt;
+
+&lt;p&gt;Delete the &lt;code&gt;public/&lt;/code&gt; directory with &lt;code&gt;rm -r public/&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Initialize a git repository and add the remote:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git init
+$ git remote add origin git@github.com:&amp;lt;username&amp;gt;/blog.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;setup-when-you-ve-already-committed-and-pushed:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Setup When You&amp;rsquo;ve Already Committed and Pushed&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve already got your hugo site committed to source control and pushed up to
+GitHub, then the process is similar, except that you need to make room for the submodule.&lt;/p&gt;
+
+&lt;p&gt;Kill your hugo server so that it stops regenerating the HTML.&lt;/p&gt;
+
+&lt;p&gt;Create a new, empty repository named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; on GitHub, making sure
+to tick the &lt;em&gt;Initialize this repository with a README&lt;/em&gt; box.&lt;/p&gt;
+
+&lt;p&gt;Delete the &lt;code&gt;public/&lt;/code&gt; directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git rm -r public
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;adding-the-submodule:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Adding The Submodule&lt;/h3&gt;
+
+&lt;p&gt;Clone the &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; repo into a submodule in &lt;code&gt;public&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git submodule add git@github.com:&amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;.github.io.git public
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add everything and push it up to GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add .
+$ git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Regenerate the HTML and push the submodule up to GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ hugo -t -theme=YOURTHEME
+$ cd public
+$ git add .
+$ git commit -m &amp;quot;Generate site&amp;quot;
+$ git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should be able to see the index page up on &lt;username&gt;.github.io a few moments later.&lt;/p&gt;
+
+&lt;h3 id=&#34;add-a-handy-deploy-script:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Add a Handy Deploy Script&lt;/h3&gt;
+
+&lt;p&gt;Use something like &lt;a href=&#34;https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh&#34;&gt;Spencer Lyon&amp;rsquo;s script&lt;/a&gt; to simplify deploys.&lt;/p&gt;
+
+&lt;h2 id=&#34;mapping-a-custom-domain:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Mapping a Custom Domain&lt;/h2&gt;
+
+&lt;p&gt;Whether you&amp;rsquo;re going to use a subdomain like &lt;code&gt;blog.yoursite.com&lt;/code&gt; or an apex domain like
+&lt;code&gt;yoursite.com&lt;/code&gt;, you need to first add a file named CNAME to the submodule repository containing
+the domain you&amp;rsquo;re mapping to.&lt;/p&gt;
+
+&lt;p&gt;Note that this file should be named &lt;code&gt;CNAME&lt;/code&gt;, even if the DNS record you&amp;rsquo;re creating is an A record
+or ALIAS record rather than a CNAME record.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re mapping a subdomain, create a CNAME record with your DNS provider. For an apex domain
+you&amp;rsquo;ll need either an ALIAS record on an A record. It depends on the provider.&lt;/p&gt;
+
+&lt;p&gt;For more information about DNS mappings, check out the &lt;a href=&#34;https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/&#34;&gt;guide on GitHub&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Converting Black &amp; White Images to Arbitrary Two Tone Colours with the `image` Package</title>
@@ -997,101 +1145,6 @@ total:                      (statements)    81.0%
 &lt;p&gt;It turns out the only things that are not covered are main (0%), bubbles.New (67%), and fish.New (67%).&lt;/p&gt;
 
 &lt;p&gt;That seems perfectly acceptable.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
-      <link>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</link>
-      <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
-      
-      <guid>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</guid>
-      <description>
-
-&lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
-
-&lt;p&gt;This isn&amp;rsquo;t just a &lt;em&gt;to-may-to to-mah-to&lt;/em&gt; kind of thing. All of these concepts are related.&lt;/p&gt;
-
-&lt;h2 id=&#34;godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc—the web server&lt;/h2&gt;
-
-&lt;p&gt;The &lt;code&gt;godoc&lt;/code&gt; tool is intended primarily to run a documentation server in your browser on &lt;a href=&#34;http://localhost:6060/pkg/&#34;&gt;localhost&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;godoc -http=&amp;quot;:6060&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It includes the documentation for the Go standard library, along with any package that lives in your GOPATH.&lt;/p&gt;
-
-&lt;p&gt;It can also format documentation as plain text on the command-line, where you would pass the import path of the package you are interested in. This was added as an afterthought.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;godoc golang.org/x/tools/godoc
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Running &lt;code&gt;godoc&lt;/code&gt; without any arguments will output the usage statement for the tool.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;usage: godoc package [name ...]
-       godoc -http=:6060
-
-...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
-
-&lt;p&gt;The familiar &lt;code&gt;go&lt;/code&gt; command-line tool, which is used to &lt;code&gt;go run&lt;/code&gt; or &lt;code&gt;go build&lt;/code&gt; or &lt;code&gt;go test&lt;/code&gt;, also has a subcommand &lt;code&gt;doc&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;doc&lt;/code&gt; subcommand will print out the documentation for whatever argument you pass it: a package, const, func, type, var, or method.&lt;/p&gt;
-
-&lt;p&gt;Unlike the &lt;code&gt;godoc&lt;/code&gt; command, &lt;code&gt;go doc&lt;/code&gt; was intended from the start to be convenient from the command-line.&lt;/p&gt;
-
-&lt;p&gt;The most important difference between &lt;code&gt;godoc&lt;/code&gt; and &lt;code&gt;go doc&lt;/code&gt; on the command-line, is that the syntax for &lt;code&gt;go doc&lt;/code&gt; is, well, Go.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go doc gob.Decoder
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The equivalent command using &lt;code&gt;godoc&lt;/code&gt; is a bit more awkward, requiring the full import path:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;godoc encoding/gob Decoder
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The default behavior of &lt;code&gt;go doc&lt;/code&gt; when calling it without arguments, is to display the documentation for the current package.&lt;/p&gt;
-
-&lt;h2 id=&#34;godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc.org—the website&lt;/h2&gt;
-
-&lt;p&gt;godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.&lt;/p&gt;
-
-&lt;p&gt;The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local &lt;code&gt;godoc&lt;/code&gt; server, but as pointed out in the comments, godoc.org doesn&amp;rsquo;t use the output from the &lt;code&gt;godoc&lt;/code&gt; tool.&lt;/p&gt;
-
-&lt;h2 id=&#34;go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go/doc—the package&lt;/h2&gt;
-
-&lt;p&gt;The command &lt;code&gt;godoc&lt;/code&gt; and the website godoc.org both rely on the package &lt;code&gt;go/doc&lt;/code&gt; to extract source code documentation.&lt;/p&gt;
-
-&lt;p&gt;If you were to use &lt;code&gt;godoc&lt;/code&gt; to ask about &lt;code&gt;go/doc&lt;/code&gt;, it would tell you all about it.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ godoc go/doc
-PACKAGE DOCUMENTATION
-
-package doc
-    import &amp;quot;go/doc&amp;quot;
-
-    Package doc extracts source code documentation from a Go AST.
-
-...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;If in doubt…&lt;/h2&gt;
-
-&lt;p&gt;When people are referring to the package go/doc in casual conversation, they&amp;rsquo;ll often drop the slash. And when saying &lt;em&gt;go doc&lt;/em&gt; they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re unsure of exactly which one they mean, ask for clarification!&lt;/p&gt;
-
-&lt;h2 id=&#34;summary:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;Summary&lt;/h2&gt;
-
-&lt;p&gt;The package &lt;code&gt;go/doc&lt;/code&gt; is used by other tools to extract the documentation comments from the AST.&lt;/p&gt;
-
-&lt;p&gt;The command-line tool &lt;code&gt;godoc&lt;/code&gt; is a web server first, and outputs plain text documentation to STDOUT as an afterthought, whereas &lt;code&gt;go doc&lt;/code&gt; is intended to be used to output documentation on the command-line.&lt;/p&gt;
-
-&lt;p&gt;The godoc.org website is the publicly searchable documentation for go packages that are not a part of the standard library.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;With thanks to Rob Pike for clarifying the reasoning behind the various tools.&lt;/em&gt;&lt;/p&gt;
 </description>
     </item>
     

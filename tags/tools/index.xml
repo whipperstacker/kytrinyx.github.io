@@ -38,7 +38,7 @@
 
 &lt;p&gt;Here&amp;rsquo;s the command that will ask &lt;code&gt;gofmt&lt;/code&gt; to show a diff with the extra parentheses removed:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;gofmt -d -r &#39;(a) -&amp;amp;gt; a&#39; .
+&lt;pre&gt;&lt;code&gt;gofmt -d -r &#39;(a) -&amp;gt; a&#39; .
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Running this against the above code provides the following diff:&lt;/p&gt;

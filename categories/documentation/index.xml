@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Documentation on Whipperstacker</title>
-    <link>http://kytrinyx.github.io/categories/documentation/</link>
+    <link>http://whipperstacker.com/categories/documentation/</link>
     <description>Recent content in Documentation on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 24 Oct 2015 12:12:11 -0700</lastBuildDate>
-    <atom:link href="http://kytrinyx.github.io/categories/documentation/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://whipperstacker.com/categories/documentation/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Browse the Go Documentation Without an Internet Connection</title>
-      <link>http://kytrinyx.github.io/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
+      <link>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</link>
       <pubDate>Sat, 24 Oct 2015 12:12:11 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
+      <guid>http://whipperstacker.com/2015/10/24/browse-the-go-documentation-without-an-internet-connection</guid>
       <description>&lt;p&gt;If you travel a lot (or if you live in the boondocks, like I do), then you&amp;rsquo;ll probably find yourself in a situation where you need to browse the documentation for the packages in the Go standard library, but the internet connection is terrible or just plain non-existent.&lt;/p&gt;
 
 &lt;p&gt;To get around this, run a godoc server locally on an available port. I&amp;rsquo;ve often seen people use 6060 or 4040.&lt;/p&gt;
@@ -28,10 +28,10 @@
     
     <item>
       <title>Idiomatic Doc Comments: Document Your Function, Not Your Function Signature</title>
-      <link>http://kytrinyx.github.io/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
+      <link>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</link>
       <pubDate>Wed, 14 Oct 2015 12:07:58 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
+      <guid>http://whipperstacker.com/2015/10/14/idiomatic-doc-comments-document-your-function-not-your-function-signature</guid>
       <description>&lt;p&gt;It&amp;rsquo;s quite possible to run &lt;code&gt;golint&lt;/code&gt; without complaint and end up with documentation that is mediocre and unhelpful.&lt;/p&gt;
 
 &lt;p&gt;Part of the problem is that programmers coming to Go from other languages have a lot of baggage.&lt;/p&gt;
@@ -90,10 +90,10 @@ func Exit(code int)
     
     <item>
       <title>Run a `godoc` Server Locally to See Documentation for Unpublished Packages</title>
-      <link>http://kytrinyx.github.io/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
+      <link>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</link>
       <pubDate>Sat, 03 Oct 2015 11:52:34 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
+      <guid>http://whipperstacker.com/2015/10/03/run-a-godoc-server-locally-to-see-documentation-for-unpublished-packages</guid>
       <description>&lt;p&gt;Gophers care a lot about documentation and people appreciate it immensely when you have a great overview, succinct summaries, great examples, and helpful details about gotchas.&lt;/p&gt;
 
 &lt;p&gt;Often it&amp;rsquo;s only after publishing a library and then perusing the generated documentation on &lt;a href=&#34;https://godoc.org/&#34;&gt;godoc.org&lt;/a&gt; that you start seeing the missing bits and pieces. Typos jump out. Awkward phrases make you want to cringe. You realize that you really need a good example for that one core function.&lt;/p&gt;
@@ -115,10 +115,10 @@ func Exit(code int)
     
     <item>
       <title>Go Documentation: godoc, go doc, godoc.org, and go/doc—Which One’s Which?</title>
-      <link>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</link>
+      <link>http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</link>
       <pubDate>Wed, 30 Sep 2015 10:59:12 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</guid>
+      <guid>http://whipperstacker.com/2015/09/30/go-documentation-godoc-godoc-godoc-org-and-go-doc</guid>
       <description>
 
 &lt;p&gt;Go takes its documentation &lt;a href=&#34;https://golang.org/doc/effective_go.html#commentary&#34;&gt;very seriously&lt;/a&gt;, and nobody would blame you if you found it confusing that someone might reference &lt;code&gt;godoc&lt;/code&gt; in one breath and &lt;code&gt;go doc&lt;/code&gt; in the next.&lt;/p&gt;
@@ -210,10 +210,10 @@ package doc
     
     <item>
       <title>How to View the Documentation for a Single Standard Library Function on the Command-Line</title>
-      <link>http://kytrinyx.github.io/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
+      <link>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</link>
       <pubDate>Tue, 29 Sep 2015 10:57:09 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
+      <guid>http://whipperstacker.com/2015/09/29/how-to-view-the-documentation-for-a-single-standard-library-function-on-the-command-line</guid>
       <description>&lt;p&gt;You know exactly which function you need to use, and you know which package it&amp;rsquo;s in, and you seem to recall that there&amp;rsquo;s a gotcha with it, but for the life of you, you just cannot remember the details.&lt;/p&gt;
 
 &lt;p&gt;Your first instinct might be to hit up a search engine: &lt;em&gt;golang filepath walk&lt;/em&gt;.&lt;/p&gt;
@@ -262,10 +262,10 @@ func Embellish(s string) string
     
     <item>
       <title>How to Run the Go Tour Locally</title>
-      <link>http://kytrinyx.github.io/2015/09/27/how-to-run-the-go-tour-locally</link>
+      <link>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</link>
       <pubDate>Sun, 27 Sep 2015 10:43:50 -0700</pubDate>
       
-      <guid>http://kytrinyx.github.io/2015/09/27/how-to-run-the-go-tour-locally</guid>
+      <guid>http://whipperstacker.com/2015/09/27/how-to-run-the-go-tour-locally</guid>
       <description>
 
 &lt;p&gt;You decided to give Go a try. You installed the language on your Mac, you configured a &lt;code&gt;$GOPATH&lt;/code&gt;, and the internet told you that you should take the Go Tour next.&lt;/p&gt;

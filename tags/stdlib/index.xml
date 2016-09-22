@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Stdlib on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/stdlib/</link>
-    <description>Recent content in Stdlib on Whipperstacker</description>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/stdlib/index.xml</link>
+    <description>Recent content on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 01 Nov 2015 12:15:26 -0700</lastBuildDate>
+    <copyright>Katrina Owen</copyright>
     <atom:link href="http://whipperstacker.com/tags/stdlib/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -35,8 +35,7 @@
 
 &lt;p&gt;On the other hand, if what you&amp;rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&amp;rsquo;s either going to be embarrassing, or complicated.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&amp;rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.&lt;/p&gt;
 
@@ -44,7 +43,7 @@
 
 &lt;p&gt;It turns out, it&amp;rsquo;s very, very easy to decode a PNG using the &lt;code&gt;image&lt;/code&gt; package.&lt;/p&gt;
 
-&lt;h2 id=&#34;manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
+&lt;h2 id=&#34;manipulating-pixels-using-the-image-package&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
 
 &lt;p&gt;Read the image from the filesystem.&lt;/p&gt;
 
@@ -123,8 +122,7 @@ defer func() {
 png.Encode(w, out)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.&lt;/p&gt;
 
@@ -144,21 +142,21 @@ png.Encode(w, out)
 
 &lt;p&gt;Here are three ways to compute the last day of the any month using the existing functionality in the &lt;code&gt;time&lt;/code&gt; package in Go&amp;rsquo;s standard library.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-32nd-day:f4beea25695020758a2c64267c269442&#34;&gt;The 32nd Day&lt;/h2&gt;
+&lt;h2 id=&#34;the-32nd-day&#34;&gt;The 32nd Day&lt;/h2&gt;
 
 &lt;p&gt;Ian Lance Taylor suggested a trick where you get the 32nd day of the month you&amp;rsquo;re interested in, which becomes the _n_th day of the next month. Then you can subtract 32-n to get the value you&amp;rsquo;re looking for.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;32 - time.Date(2016, time.February, 32, 0, 0, 0, 0, time.UTC).Day()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;the-zeroth-day:f4beea25695020758a2c64267c269442&#34;&gt;The Zeroth Day&lt;/h2&gt;
+&lt;h2 id=&#34;the-zeroth-day&#34;&gt;The Zeroth Day&lt;/h2&gt;
 
 &lt;p&gt;An even simpler trick, suggested by a fellow named Johnathan is to use the &amp;ldquo;zeroth&amp;rdquo; day of the following month, which by definition is the last day in the month you&amp;rsquo;re interested in.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;time.Date(2012, time.February+1, 0, 0, 0, 0, 0, time.UTC).Day()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;a-month-less-a-day:f4beea25695020758a2c64267c269442&#34;&gt;A Month—Less a Day&lt;/h2&gt;
+&lt;h2 id=&#34;a-month-less-a-day&#34;&gt;A Month—Less a Day&lt;/h2&gt;
 
 &lt;p&gt;If you have a value of type &lt;code&gt;time.Time&lt;/code&gt; representing the first day of the month, then you can use &lt;code&gt;AddDate()&lt;/code&gt; to get the value that you want:&lt;/p&gt;
 
@@ -172,7 +170,7 @@ ts.AddDate(0, 1, -1).Day()
 ts.Month() // 2
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;don-t-reach-for-that-dependency:f4beea25695020758a2c64267c269442&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
+&lt;h2 id=&#34;don-t-reach-for-that-dependency&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
 
 &lt;p&gt;Before reaching for a 3rd party library or package, take a good look at what the standard library can offer.&lt;/p&gt;
 
@@ -201,7 +199,7 @@ ts.Month() // 2
 &lt;li&gt;point flag.Usage to a custom function&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
+&lt;h2 id=&#34;redefining-flag-usage-inline&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
 
 &lt;p&gt;You can override the Usage variable by defining an unnamed function and assigning it to &lt;code&gt;flag.Usage&lt;/code&gt;.&lt;/p&gt;
 
@@ -213,7 +211,7 @@ ts.Month() // 2
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
+&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
 
 &lt;p&gt;If the custom definition is long or complex, you may want to define it as a separate function so you don&amp;rsquo;t clutter up your &lt;code&gt;main&lt;/code&gt;. You can then point &lt;code&gt;flag.Usage&lt;/code&gt; to the custom function.&lt;/p&gt;
 
@@ -228,7 +226,7 @@ func usage() {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Refer to the Documentation&lt;/h2&gt;
+&lt;h2 id=&#34;refer-to-the-documentation&#34;&gt;Refer to the Documentation&lt;/h2&gt;
 
 &lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
 

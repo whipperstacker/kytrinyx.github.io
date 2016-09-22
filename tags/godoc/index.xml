@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Godoc on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/godoc/</link>
-    <description>Recent content in Godoc on Whipperstacker</description>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/godoc/index.xml</link>
+    <description>Recent content on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 Sep 2015 10:43:50 -0700</lastBuildDate>
+    <copyright>Katrina Owen</copyright>
     <atom:link href="http://whipperstacker.com/tags/godoc/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -39,7 +39,7 @@
 
 &lt;p&gt;The longer answer is that how you run it depends on your &lt;code&gt;PATH&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;path-where-programs-live:99d114c93927cc7dc1a5bcd316767ea8&#34;&gt;PATH—Where Programs Live&lt;/h2&gt;
+&lt;h2 id=&#34;path-where-programs-live&#34;&gt;PATH—Where Programs Live&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;PATH&lt;/code&gt; is a list of places on your filesystem that your computer will look, if you ask it to run a program.&lt;/p&gt;
 

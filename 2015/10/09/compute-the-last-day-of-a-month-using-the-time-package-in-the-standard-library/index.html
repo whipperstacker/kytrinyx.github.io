@@ -73,21 +73,21 @@
 
 <p>Here are three ways to compute the last day of the any month using the existing functionality in the <code>time</code> package in Go&rsquo;s standard library.</p>
 
-<h2 id="the-32nd-day:f4beea25695020758a2c64267c269442">The 32nd Day</h2>
+<h2 id="the-32nd-day">The 32nd Day</h2>
 
 <p>Ian Lance Taylor suggested a trick where you get the 32nd day of the month you&rsquo;re interested in, which becomes the _n_th day of the next month. Then you can subtract 32-n to get the value you&rsquo;re looking for.</p>
 
 <pre><code>32 - time.Date(2016, time.February, 32, 0, 0, 0, 0, time.UTC).Day()
 </code></pre>
 
-<h2 id="the-zeroth-day:f4beea25695020758a2c64267c269442">The Zeroth Day</h2>
+<h2 id="the-zeroth-day">The Zeroth Day</h2>
 
 <p>An even simpler trick, suggested by a fellow named Johnathan is to use the &ldquo;zeroth&rdquo; day of the following month, which by definition is the last day in the month you&rsquo;re interested in.</p>
 
 <pre><code>time.Date(2012, time.February+1, 0, 0, 0, 0, 0, time.UTC).Day()
 </code></pre>
 
-<h2 id="a-month-less-a-day:f4beea25695020758a2c64267c269442">A Month—Less a Day</h2>
+<h2 id="a-month-less-a-day">A Month—Less a Day</h2>
 
 <p>If you have a value of type <code>time.Time</code> representing the first day of the month, then you can use <code>AddDate()</code> to get the value that you want:</p>
 
@@ -101,7 +101,7 @@ ts.AddDate(0, 1, -1).Day()
 ts.Month() // 2
 </code></pre>
 
-<h2 id="don-t-reach-for-that-dependency:f4beea25695020758a2c64267c269442">Don&rsquo;t Reach for that Dependency</h2>
+<h2 id="don-t-reach-for-that-dependency">Don&rsquo;t Reach for that Dependency</h2>
 
 <p>Before reaching for a 3rd party library or package, take a good look at what the standard library can offer.</p>
 

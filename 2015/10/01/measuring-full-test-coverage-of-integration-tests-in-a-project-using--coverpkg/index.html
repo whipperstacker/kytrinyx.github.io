@@ -103,7 +103,7 @@
 
 <p>The tests for the application live in <code>main_test.go</code>, and they&rsquo;re very high level. The tests require the <code>fish</code> package, and the fish package, in turn, requires the <code>bubbles</code> package.</p>
 
-<h2 id="measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e">Measuring Test Coverage with -cover</h2>
+<h2 id="measuring-test-coverage-with-cover">Measuring Test Coverage with -cover</h2>
 
 <p>Running with -cover gives 33% coverage.</p>
 
@@ -133,7 +133,7 @@ total:                  (statements)    33.3%
 
 <p>We need to get the stats for the dependencies.</p>
 
-<h2 id="measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e">Measuring Test Coverage with -coverpkg</h2>
+<h2 id="measuring-test-coverage-with-coverpkg">Measuring Test Coverage with -coverpkg</h2>
 
 <p>The flag that does this is <code>-coverpkg</code>. It takes a comma-separated list of the packages you&rsquo;re interested in, and it also accepts the handy <code>./...</code> shortcut that so many other go commands understands to mean <em>this package and all packages in the subdirectories, recursively</em>.</p>
 

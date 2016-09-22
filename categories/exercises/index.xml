@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Exercises on Whipperstacker</title>
-    <link>http://whipperstacker.com/categories/exercises/</link>
-    <description>Recent content in Exercises on Whipperstacker</description>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/categories/exercises/index.xml</link>
+    <description>Recent content on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 13 Oct 2015 12:04:23 -0700</lastBuildDate>
+    <copyright>Katrina Owen</copyright>
     <atom:link href="http://whipperstacker.com/categories/exercises/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -27,7 +27,7 @@
 
 &lt;p&gt;Or, maybe, you just need a break from name servers and other computer-science-y things so you can think about concurrency in the context of toys.&lt;/p&gt;
 
-&lt;h2 id=&#34;santa-s-workers:fb2b314049b270b14ac9ea08c88a9d93&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
+&lt;h2 id=&#34;santa-s-workers&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
 
 &lt;p&gt;Kraneisha is 4 years old. This year she has asked Santa for a tiara and a toolbelt so that she can be a princess mechanic.&lt;/p&gt;
 
@@ -67,7 +67,7 @@ Ty, 5, Gaming console
 
 &lt;p&gt;There are probably several correct approaches to each of these exercises, and (of course) a multitude of incorrect ones.&lt;/p&gt;
 
-&lt;h2 id=&#34;exercise-1-the-daily-walk:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-1-the-daily-walk&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
 
 &lt;p&gt;Every morning, Alice and Bob go for a walk, and being creatures of habit, they follow the same routine every day.&lt;/p&gt;
 
@@ -98,7 +98,7 @@ Exiting and locking the door.
 Alarm is armed.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;exercise-2-eating-tapas:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-2-eating-tapas&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
 
 &lt;p&gt;Four friends are having dinner together. They ordered five dishes to share, each of which consists of between 5 and 10 morsels.&lt;/p&gt;
 
@@ -147,7 +147,7 @@ Dave is enjoying some patatas bravas
 That was delicious!
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;exercise-3-internet-café:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-3-internet-café&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
 
 &lt;p&gt;A small internet café in a village just outside of Manilla has 8 computers, which are available on a first-come first-serve basis. When all the computers are taken, the next person in line has to wait until a computer frees up.&lt;/p&gt;
 
@@ -229,7 +229,7 @@ Tourist 21 is done, having spent 111 minutes online.
 The place is empty, let&#39;s close up and go to the beach!
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;notes:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Notes&lt;/h2&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
 
 &lt;p&gt;Use &lt;code&gt;time.Sleep()&lt;/code&gt; to simulate delays and activities.&lt;/p&gt;
 
@@ -237,7 +237,7 @@ The place is empty, let&#39;s close up and go to the beach!
 
 &lt;p&gt;The exercises were inspired by William Kennedy&amp;rsquo;s post &lt;a href=&#34;http://www.goinggo.net/2014/02/the-nature-of-channels-in-go.html&#34;&gt;The Nature Of Channels In Go&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;stuck:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Stuck?&lt;/h2&gt;
+&lt;h2 id=&#34;stuck&#34;&gt;Stuck?&lt;/h2&gt;
 
 &lt;p&gt;If you get stuck, ask for help on &lt;a href=&#34;irc:irc.freenode.net/go-nuts&#34;&gt;IRC&lt;/a&gt; or &lt;a href=&#34;http://blog.gopheracademy.com/gophers-slack-community/&#34;&gt;Slack&lt;/a&gt;, or try the &lt;a href=&#34;https://forum.golangbridge.org/&#34;&gt;Go Forum at GolangBridge&lt;/a&gt;.&lt;/p&gt;
 </description>

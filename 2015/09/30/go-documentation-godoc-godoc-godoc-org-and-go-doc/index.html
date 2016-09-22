@@ -78,7 +78,7 @@
 
 <p>This isn&rsquo;t just a <em>to-may-to to-mah-to</em> kind of thing. All of these concepts are related.</p>
 
-<h2 id="godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7">godoc—the web server</h2>
+<h2 id="godoc-the-web-server">godoc—the web server</h2>
 
 <p>The <code>godoc</code> tool is intended primarily to run a documentation server in your browser on <a href="http://localhost:6060/pkg/">localhost</a>.</p>
 
@@ -100,7 +100,7 @@
 ...
 </code></pre>
 
-<h2 id="go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7">go doc—the go subcommand</h2>
+<h2 id="go-doc-the-go-subcommand">go doc—the go subcommand</h2>
 
 <p>The familiar <code>go</code> command-line tool, which is used to <code>go run</code> or <code>go build</code> or <code>go test</code>, also has a subcommand <code>doc</code>.</p>
 
@@ -120,13 +120,13 @@
 
 <p>The default behavior of <code>go doc</code> when calling it without arguments, is to display the documentation for the current package.</p>
 
-<h2 id="godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7">godoc.org—the website</h2>
+<h2 id="godoc-org-the-website">godoc.org—the website</h2>
 
 <p>godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.</p>
 
 <p>The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local <code>godoc</code> server, but as pointed out in the comments, godoc.org doesn&rsquo;t use the output from the <code>godoc</code> tool.</p>
 
-<h2 id="go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7">go/doc—the package</h2>
+<h2 id="go-doc-the-package">go/doc—the package</h2>
 
 <p>The command <code>godoc</code> and the website godoc.org both rely on the package <code>go/doc</code> to extract source code documentation.</p>
 
@@ -143,13 +143,13 @@ package doc
 ...
 </code></pre>
 
-<h2 id="if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7">If in doubt…</h2>
+<h2 id="if-in-doubt">If in doubt…</h2>
 
 <p>When people are referring to the package go/doc in casual conversation, they&rsquo;ll often drop the slash. And when saying <em>go doc</em> they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.</p>
 
 <p>If you&rsquo;re unsure of exactly which one they mean, ask for clarification!</p>
 
-<h2 id="summary:d20d2a74ccb4f63cfef4591d936541f7">Summary</h2>
+<h2 id="summary">Summary</h2>
 
 <p>The package <code>go/doc</code> is used by other tools to extract the documentation comments from the AST.</p>
 

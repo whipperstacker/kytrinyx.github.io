@@ -80,7 +80,7 @@ and you just want to figure out the easiest way to stitch it all together.</p>
 
 <p>First, a warning:</p>
 
-<h2 id="don-t-make-a-gh-pages-branch:51d0e65fe45d4368429dafddfca3e5cc">Don&rsquo;t Make a <code>gh-pages</code> Branch</h2>
+<h2 id="don-t-make-a-gh-pages-branch">Don&rsquo;t Make a <code>gh-pages</code> Branch</h2>
 
 <p>A lot of the documentation you&rsquo;ll find will talk about creating a branch
 called <code>gh-pages</code> for the HTML. This is great if you&rsquo;re creating a portfolio
@@ -96,7 +96,7 @@ or an organization).</p>
 
 <p>Ok, moving on.</p>
 
-<h2 id="a-tale-of-two-repositories:51d0e65fe45d4368429dafddfca3e5cc">A Tale of Two Repositories</h2>
+<h2 id="a-tale-of-two-repositories">A Tale of Two Repositories</h2>
 
 <p>The trick to deploying a stand-alone, hugo-generated site that will be hosted
 on a custom domain is that everything within <code>public/</code> needs to be in its own
@@ -115,7 +115,7 @@ whatever you like. For the sake of argument, let&rsquo;s assume this repository 
 on GitHub.</li>
 </ol>
 
-<h3 id="setup-when-nothing-is-committed:51d0e65fe45d4368429dafddfca3e5cc">Setup When Nothing is Committed</h3>
+<h3 id="setup-when-nothing-is-committed">Setup When Nothing is Committed</h3>
 
 <p>Create two new, empty repositories on GitHub:</p>
 
@@ -135,7 +135,7 @@ README</em> box, since that will make the next step easier.</li>
 $ git remote add origin git@github.com:&lt;username&gt;/blog.git
 </code></pre>
 
-<h3 id="setup-when-you-ve-already-committed-and-pushed:51d0e65fe45d4368429dafddfca3e5cc">Setup When You&rsquo;ve Already Committed and Pushed</h3>
+<h3 id="setup-when-you-ve-already-committed-and-pushed">Setup When You&rsquo;ve Already Committed and Pushed</h3>
 
 <p>If you&rsquo;ve already got your Hugo site committed to source control and pushed up to
 GitHub, then the process is similar, except that you need to make room for the submodule
@@ -151,7 +151,7 @@ to tick the <em>Initialize this repository with a README</em> box.</p>
 <pre><code>$ git rm -r public
 </code></pre>
 
-<h3 id="adding-the-submodule:51d0e65fe45d4368429dafddfca3e5cc">Adding the Submodule</h3>
+<h3 id="adding-the-submodule">Adding the Submodule</h3>
 
 <p>Clone the <code>&lt;username&gt;.github.io</code> repo into a submodule in <code>public</code>:</p>
 
@@ -164,7 +164,7 @@ to tick the <em>Initialize this repository with a README</em> box.</p>
 $ git push -u origin master
 </code></pre>
 
-<h3 id="deploying:51d0e65fe45d4368429dafddfca3e5cc">Deploying</h3>
+<h3 id="deploying">Deploying</h3>
 
 <p>Regenerate the HTML and push the submodule up to GitHub:</p>
 
@@ -179,7 +179,7 @@ $ git push origin master
 
 <p>Add a handy deploy script like <a href="https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh">Spencer Lyon&rsquo;s script</a> to simplify things a bit.</p>
 
-<h2 id="mapping-a-custom-domain:51d0e65fe45d4368429dafddfca3e5cc">Mapping a Custom Domain</h2>
+<h2 id="mapping-a-custom-domain">Mapping a Custom Domain</h2>
 
 <p>Whether you&rsquo;re going to use a subdomain like <code>blog.yoursite.com</code> or an apex domain like
 <code>yoursite.com</code>, you need to first add a file named CNAME to the submodule repository containing
@@ -193,7 +193,7 @@ you&rsquo;ll need either an ALIAS record on an A record. It depends on the provi
 
 <p>For more information about DNS mappings, check out the <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/">guide on GitHub</a>.</p>
 
-<h2 id="regenerating-all-the-urls:51d0e65fe45d4368429dafddfca3e5cc">Regenerating All the URLS</h2>
+<h2 id="regenerating-all-the-urls">Regenerating All the URLS</h2>
 
 <p>Once the DNS has propagated you&rsquo;re going to need to change the base host name in the Hugo config
 file, regenerate the site with the correct urls, and redeploy.</p>

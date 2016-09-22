@@ -78,7 +78,7 @@
 
 <p>Another excellent resource when it comes to making the decision about pointer vs value receivers is the <a href="https://github.com/golang/go/wiki/CodeReviewComments#receiver-type">Code Review Comments wiki page</a> on the golang/go project on GitHub. It has a section about receiver types, which you should absolutely go read. It concludes with <em>when in doubt, use a pointer receiver</em>.</p>
 
-<h2 id="why-would-you-ever-use-a-non-pointer-receiver:d50cffd73db67296e192c311b4a1600b">Why Would You Ever Use a Non-Pointer Receiver?</h2>
+<h2 id="why-would-you-ever-use-a-non-pointer-receiver">Why Would You Ever Use a Non-Pointer Receiver?</h2>
 
 <p>When the receiver is a map or a slice you will almost always want to use a value receiver for these. Almost. Maps and slices act as references. <a href="http://blog.golang.org/go-slices-usage-and-internals">Go Slices: Usage and Internals</a> on the official Go blog is a fantastic deep dive into slices, and you should go read it if you haven&rsquo;t already, in order to understand why you occasionally will want to use a pointer receiver for a slice.</p>
 

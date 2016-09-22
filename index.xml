@@ -2,10 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Whipperstacker</title>
-    <link>http://whipperstacker.com/</link>
+    <link>http://whipperstacker.com/index.xml</link>
     <description>Recent content on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <copyright>Katrina Owen</copyright>
     <lastBuildDate>Fri, 27 Nov 2015 08:26:28 -0700</lastBuildDate>
     <atom:link href="http://whipperstacker.com/index.xml" rel="self" type="application/rss+xml" />
     
@@ -33,7 +34,7 @@ and you just want to figure out the easiest way to stitch it all together.&lt;/p
 
 &lt;p&gt;First, a warning:&lt;/p&gt;
 
-&lt;h2 id=&#34;don-t-make-a-gh-pages-branch:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Don&amp;rsquo;t Make a &lt;code&gt;gh-pages&lt;/code&gt; Branch&lt;/h2&gt;
+&lt;h2 id=&#34;don-t-make-a-gh-pages-branch&#34;&gt;Don&amp;rsquo;t Make a &lt;code&gt;gh-pages&lt;/code&gt; Branch&lt;/h2&gt;
 
 &lt;p&gt;A lot of the documentation you&amp;rsquo;ll find will talk about creating a branch
 called &lt;code&gt;gh-pages&lt;/code&gt; for the HTML. This is great if you&amp;rsquo;re creating a portfolio
@@ -49,7 +50,7 @@ or an organization).&lt;/p&gt;
 
 &lt;p&gt;Ok, moving on.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-tale-of-two-repositories:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;A Tale of Two Repositories&lt;/h2&gt;
+&lt;h2 id=&#34;a-tale-of-two-repositories&#34;&gt;A Tale of Two Repositories&lt;/h2&gt;
 
 &lt;p&gt;The trick to deploying a stand-alone, hugo-generated site that will be hosted
 on a custom domain is that everything within &lt;code&gt;public/&lt;/code&gt; needs to be in its own
@@ -68,7 +69,7 @@ whatever you like. For the sake of argument, let&amp;rsquo;s assume this reposit
 on GitHub.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;setup-when-nothing-is-committed:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Setup When Nothing is Committed&lt;/h3&gt;
+&lt;h3 id=&#34;setup-when-nothing-is-committed&#34;&gt;Setup When Nothing is Committed&lt;/h3&gt;
 
 &lt;p&gt;Create two new, empty repositories on GitHub:&lt;/p&gt;
 
@@ -88,7 +89,7 @@ README&lt;/em&gt; box, since that will make the next step easier.&lt;/li&gt;
 $ git remote add origin git@github.com:&amp;lt;username&amp;gt;/blog.git
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;setup-when-you-ve-already-committed-and-pushed:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Setup When You&amp;rsquo;ve Already Committed and Pushed&lt;/h3&gt;
+&lt;h3 id=&#34;setup-when-you-ve-already-committed-and-pushed&#34;&gt;Setup When You&amp;rsquo;ve Already Committed and Pushed&lt;/h3&gt;
 
 &lt;p&gt;If you&amp;rsquo;ve already got your Hugo site committed to source control and pushed up to
 GitHub, then the process is similar, except that you need to make room for the submodule
@@ -104,7 +105,7 @@ to tick the &lt;em&gt;Initialize this repository with a README&lt;/em&gt; box.&l
 &lt;pre&gt;&lt;code&gt;$ git rm -r public
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;adding-the-submodule:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Adding the Submodule&lt;/h3&gt;
+&lt;h3 id=&#34;adding-the-submodule&#34;&gt;Adding the Submodule&lt;/h3&gt;
 
 &lt;p&gt;Clone the &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; repo into a submodule in &lt;code&gt;public&lt;/code&gt;:&lt;/p&gt;
 
@@ -117,7 +118,7 @@ to tick the &lt;em&gt;Initialize this repository with a README&lt;/em&gt; box.&l
 $ git push -u origin master
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;deploying:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Deploying&lt;/h3&gt;
+&lt;h3 id=&#34;deploying&#34;&gt;Deploying&lt;/h3&gt;
 
 &lt;p&gt;Regenerate the HTML and push the submodule up to GitHub:&lt;/p&gt;
 
@@ -132,7 +133,7 @@ $ git push origin master
 
 &lt;p&gt;Add a handy deploy script like &lt;a href=&#34;https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh&#34;&gt;Spencer Lyon&amp;rsquo;s script&lt;/a&gt; to simplify things a bit.&lt;/p&gt;
 
-&lt;h2 id=&#34;mapping-a-custom-domain:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Mapping a Custom Domain&lt;/h2&gt;
+&lt;h2 id=&#34;mapping-a-custom-domain&#34;&gt;Mapping a Custom Domain&lt;/h2&gt;
 
 &lt;p&gt;Whether you&amp;rsquo;re going to use a subdomain like &lt;code&gt;blog.yoursite.com&lt;/code&gt; or an apex domain like
 &lt;code&gt;yoursite.com&lt;/code&gt;, you need to first add a file named CNAME to the submodule repository containing
@@ -146,7 +147,7 @@ you&amp;rsquo;ll need either an ALIAS record on an A record. It depends on the p
 
 &lt;p&gt;For more information about DNS mappings, check out the &lt;a href=&#34;https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/&#34;&gt;guide on GitHub&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;regenerating-all-the-urls:51d0e65fe45d4368429dafddfca3e5cc&#34;&gt;Regenerating All the URLS&lt;/h2&gt;
+&lt;h2 id=&#34;regenerating-all-the-urls&#34;&gt;Regenerating All the URLS&lt;/h2&gt;
 
 &lt;p&gt;Once the DNS has propagated you&amp;rsquo;re going to need to change the base host name in the Hugo config
 file, regenerate the site with the correct urls, and redeploy.&lt;/p&gt;
@@ -179,8 +180,7 @@ file, regenerate the site with the correct urls, and redeploy.&lt;/p&gt;
 
 &lt;p&gt;On the other hand, if what you&amp;rsquo;re trying to do is incorporate simple, flat, black and white images into a color scheme that is not black and white, then it&amp;rsquo;s either going to be embarrassing, or complicated.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/fixtures/got-want.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Designers apparently use Photoshop and/or Illustrator to make black/white images have the colors they want. I hear you can use Inkscape or the Gimp, too. There&amp;rsquo;s a steep learning curve, though, not to mention the initial hassle of downloading and installing these things.&lt;/p&gt;
 
@@ -188,7 +188,7 @@ file, regenerate the site with the correct urls, and redeploy.&lt;/p&gt;
 
 &lt;p&gt;It turns out, it&amp;rsquo;s very, very easy to decode a PNG using the &lt;code&gt;image&lt;/code&gt; package.&lt;/p&gt;
 
-&lt;h2 id=&#34;manipulating-pixels-using-the-image-package:bb22e3c79a161d8bbb3edca141314ff3&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
+&lt;h2 id=&#34;manipulating-pixels-using-the-image-package&#34;&gt;Manipulating Pixels Using the Image Package&lt;/h2&gt;
 
 &lt;p&gt;Read the image from the filesystem.&lt;/p&gt;
 
@@ -267,8 +267,7 @@ defer func() {
 png.Encode(w, out)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;
-&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/kytrinyx/twotone/master/twotone.png&#34; alt=&#34;Generated Two Tone Graphics&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s what running the black/white image (top left) looks like when running it through the generator with a few different values.&lt;/p&gt;
 
@@ -473,7 +472,7 @@ func Exit(code int)
 
 &lt;p&gt;Or, maybe, you just need a break from name servers and other computer-science-y things so you can think about concurrency in the context of toys.&lt;/p&gt;
 
-&lt;h2 id=&#34;santa-s-workers:fb2b314049b270b14ac9ea08c88a9d93&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
+&lt;h2 id=&#34;santa-s-workers&#34;&gt;Santa&amp;rsquo;s Workers&lt;/h2&gt;
 
 &lt;p&gt;Kraneisha is 4 years old. This year she has asked Santa for a tiara and a toolbelt so that she can be a princess mechanic.&lt;/p&gt;
 
@@ -593,7 +592,7 @@ for {
 
 &lt;p&gt;Another excellent resource when it comes to making the decision about pointer vs value receivers is the &lt;a href=&#34;https://github.com/golang/go/wiki/CodeReviewComments#receiver-type&#34;&gt;Code Review Comments wiki page&lt;/a&gt; on the golang/go project on GitHub. It has a section about receiver types, which you should absolutely go read. It concludes with &lt;em&gt;when in doubt, use a pointer receiver&lt;/em&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;why-would-you-ever-use-a-non-pointer-receiver:d50cffd73db67296e192c311b4a1600b&#34;&gt;Why Would You Ever Use a Non-Pointer Receiver?&lt;/h2&gt;
+&lt;h2 id=&#34;why-would-you-ever-use-a-non-pointer-receiver&#34;&gt;Why Would You Ever Use a Non-Pointer Receiver?&lt;/h2&gt;
 
 &lt;p&gt;When the receiver is a map or a slice you will almost always want to use a value receiver for these. Almost. Maps and slices act as references. &lt;a href=&#34;http://blog.golang.org/go-slices-usage-and-internals&#34;&gt;Go Slices: Usage and Internals&lt;/a&gt; on the official Go blog is a fantastic deep dive into slices, and you should go read it if you haven&amp;rsquo;t already, in order to understand why you occasionally will want to use a pointer receiver for a slice.&lt;/p&gt;
 
@@ -648,21 +647,21 @@ for {
 
 &lt;p&gt;Here are three ways to compute the last day of the any month using the existing functionality in the &lt;code&gt;time&lt;/code&gt; package in Go&amp;rsquo;s standard library.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-32nd-day:f4beea25695020758a2c64267c269442&#34;&gt;The 32nd Day&lt;/h2&gt;
+&lt;h2 id=&#34;the-32nd-day&#34;&gt;The 32nd Day&lt;/h2&gt;
 
 &lt;p&gt;Ian Lance Taylor suggested a trick where you get the 32nd day of the month you&amp;rsquo;re interested in, which becomes the _n_th day of the next month. Then you can subtract 32-n to get the value you&amp;rsquo;re looking for.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;32 - time.Date(2016, time.February, 32, 0, 0, 0, 0, time.UTC).Day()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;the-zeroth-day:f4beea25695020758a2c64267c269442&#34;&gt;The Zeroth Day&lt;/h2&gt;
+&lt;h2 id=&#34;the-zeroth-day&#34;&gt;The Zeroth Day&lt;/h2&gt;
 
 &lt;p&gt;An even simpler trick, suggested by a fellow named Johnathan is to use the &amp;ldquo;zeroth&amp;rdquo; day of the following month, which by definition is the last day in the month you&amp;rsquo;re interested in.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;time.Date(2012, time.February+1, 0, 0, 0, 0, 0, time.UTC).Day()
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;a-month-less-a-day:f4beea25695020758a2c64267c269442&#34;&gt;A Month—Less a Day&lt;/h2&gt;
+&lt;h2 id=&#34;a-month-less-a-day&#34;&gt;A Month—Less a Day&lt;/h2&gt;
 
 &lt;p&gt;If you have a value of type &lt;code&gt;time.Time&lt;/code&gt; representing the first day of the month, then you can use &lt;code&gt;AddDate()&lt;/code&gt; to get the value that you want:&lt;/p&gt;
 
@@ -676,7 +675,7 @@ ts.AddDate(0, 1, -1).Day()
 ts.Month() // 2
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;don-t-reach-for-that-dependency:f4beea25695020758a2c64267c269442&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
+&lt;h2 id=&#34;don-t-reach-for-that-dependency&#34;&gt;Don&amp;rsquo;t Reach for that Dependency&lt;/h2&gt;
 
 &lt;p&gt;Before reaching for a 3rd party library or package, take a good look at what the standard library can offer.&lt;/p&gt;
 
@@ -785,7 +784,7 @@ func main() {
 
 &lt;p&gt;There are probably several correct approaches to each of these exercises, and (of course) a multitude of incorrect ones.&lt;/p&gt;
 
-&lt;h2 id=&#34;exercise-1-the-daily-walk:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-1-the-daily-walk&#34;&gt;Exercise 1: The Daily Walk&lt;/h2&gt;
 
 &lt;p&gt;Every morning, Alice and Bob go for a walk, and being creatures of habit, they follow the same routine every day.&lt;/p&gt;
 
@@ -816,7 +815,7 @@ Exiting and locking the door.
 Alarm is armed.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;exercise-2-eating-tapas:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-2-eating-tapas&#34;&gt;Exercise 2: Eating Tapas&lt;/h2&gt;
 
 &lt;p&gt;Four friends are having dinner together. They ordered five dishes to share, each of which consists of between 5 and 10 morsels.&lt;/p&gt;
 
@@ -865,7 +864,7 @@ Dave is enjoying some patatas bravas
 That was delicious!
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;exercise-3-internet-café:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
+&lt;h2 id=&#34;exercise-3-internet-café&#34;&gt;Exercise 3: Internet Café&lt;/h2&gt;
 
 &lt;p&gt;A small internet café in a village just outside of Manilla has 8 computers, which are available on a first-come first-serve basis. When all the computers are taken, the next person in line has to wait until a computer frees up.&lt;/p&gt;
 
@@ -947,7 +946,7 @@ Tourist 21 is done, having spent 111 minutes online.
 The place is empty, let&#39;s close up and go to the beach!
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;notes:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Notes&lt;/h2&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
 
 &lt;p&gt;Use &lt;code&gt;time.Sleep()&lt;/code&gt; to simulate delays and activities.&lt;/p&gt;
 
@@ -955,7 +954,7 @@ The place is empty, let&#39;s close up and go to the beach!
 
 &lt;p&gt;The exercises were inspired by William Kennedy&amp;rsquo;s post &lt;a href=&#34;http://www.goinggo.net/2014/02/the-nature-of-channels-in-go.html&#34;&gt;The Nature Of Channels In Go&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;stuck:86f10a40f304d1b410c2059dc1ec265a&#34;&gt;Stuck?&lt;/h2&gt;
+&lt;h2 id=&#34;stuck&#34;&gt;Stuck?&lt;/h2&gt;
 
 &lt;p&gt;If you get stuck, ask for help on &lt;a href=&#34;irc:irc.freenode.net/go-nuts&#34;&gt;IRC&lt;/a&gt; or &lt;a href=&#34;http://blog.gopheracademy.com/gophers-slack-community/&#34;&gt;Slack&lt;/a&gt;, or try the &lt;a href=&#34;https://forum.golangbridge.org/&#34;&gt;Go Forum at GolangBridge&lt;/a&gt;.&lt;/p&gt;
 </description>
@@ -1007,7 +1006,7 @@ The place is empty, let&#39;s close up and go to the beach!
 &lt;li&gt;point flag.Usage to a custom function&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
+&lt;h2 id=&#34;redefining-flag-usage-inline&#34;&gt;Redefining flag.Usage Inline&lt;/h2&gt;
 
 &lt;p&gt;You can override the Usage variable by defining an unnamed function and assigning it to &lt;code&gt;flag.Usage&lt;/code&gt;.&lt;/p&gt;
 
@@ -1019,7 +1018,7 @@ The place is empty, let&#39;s close up and go to the beach!
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
+&lt;h2 id=&#34;pointing-flag-usage-to-a-custom-function&#34;&gt;Pointing flag.Usage to a Custom Function&lt;/h2&gt;
 
 &lt;p&gt;If the custom definition is long or complex, you may want to define it as a separate function so you don&amp;rsquo;t clutter up your &lt;code&gt;main&lt;/code&gt;. You can then point &lt;code&gt;flag.Usage&lt;/code&gt; to the custom function.&lt;/p&gt;
 
@@ -1034,7 +1033,7 @@ func usage() {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878&#34;&gt;Refer to the Documentation&lt;/h2&gt;
+&lt;h2 id=&#34;refer-to-the-documentation&#34;&gt;Refer to the Documentation&lt;/h2&gt;
 
 &lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
 
@@ -1079,7 +1078,7 @@ func usage() {
 
 &lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
 
-&lt;h2 id=&#34;measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
+&lt;h2 id=&#34;measuring-test-coverage-with-cover&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
 
 &lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
 
@@ -1109,7 +1108,7 @@ total:                  (statements)    33.3%
 
 &lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
 
-&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
+&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
 
 &lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
 

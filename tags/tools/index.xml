@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tools on Whipperstacker</title>
-    <link>http://whipperstacker.com/tags/tools/</link>
-    <description>Recent content in Tools on Whipperstacker</description>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/tags/tools/index.xml</link>
+    <description>Recent content on Whipperstacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 26 Oct 2015 12:13:34 -0700</lastBuildDate>
+    <copyright>Katrina Owen</copyright>
     <atom:link href="http://whipperstacker.com/tags/tools/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -143,7 +143,7 @@
 
 &lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
 
-&lt;h2 id=&#34;measuring-test-coverage-with-cover:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
+&lt;h2 id=&#34;measuring-test-coverage-with-cover&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
 
 &lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
 
@@ -173,7 +173,7 @@ total:                  (statements)    33.3%
 
 &lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
 
-&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg:01de99d3b2a6cb94e3e55b02873ae57e&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
+&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
 
 &lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
 
@@ -220,7 +220,7 @@ total:                      (statements)    81.0%
 
 &lt;p&gt;This isn&amp;rsquo;t just a &lt;em&gt;to-may-to to-mah-to&lt;/em&gt; kind of thing. All of these concepts are related.&lt;/p&gt;
 
-&lt;h2 id=&#34;godoc-the-web-server:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc—the web server&lt;/h2&gt;
+&lt;h2 id=&#34;godoc-the-web-server&#34;&gt;godoc—the web server&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;godoc&lt;/code&gt; tool is intended primarily to run a documentation server in your browser on &lt;a href=&#34;http://localhost:6060/pkg/&#34;&gt;localhost&lt;/a&gt;.&lt;/p&gt;
 
@@ -242,7 +242,7 @@ total:                      (statements)    81.0%
 ...
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;go-doc-the-go-subcommand:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
+&lt;h2 id=&#34;go-doc-the-go-subcommand&#34;&gt;go doc—the go subcommand&lt;/h2&gt;
 
 &lt;p&gt;The familiar &lt;code&gt;go&lt;/code&gt; command-line tool, which is used to &lt;code&gt;go run&lt;/code&gt; or &lt;code&gt;go build&lt;/code&gt; or &lt;code&gt;go test&lt;/code&gt;, also has a subcommand &lt;code&gt;doc&lt;/code&gt;.&lt;/p&gt;
 
@@ -262,13 +262,13 @@ total:                      (statements)    81.0%
 
 &lt;p&gt;The default behavior of &lt;code&gt;go doc&lt;/code&gt; when calling it without arguments, is to display the documentation for the current package.&lt;/p&gt;
 
-&lt;h2 id=&#34;godoc-org-the-website:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;godoc.org—the website&lt;/h2&gt;
+&lt;h2 id=&#34;godoc-org-the-website&#34;&gt;godoc.org—the website&lt;/h2&gt;
 
 &lt;p&gt;godoc.org is, confusingly, sometimes referred to as GoDoc. It hosts documentation for Go packages that are not a part of the Go standard library. Anything hosted publicly on Bitbucket, GitHub, Google Project Hosting or Launchpad is likely to show up on GoDoc. In fact, searching for a project by its import path will automatically add it to the site.&lt;/p&gt;
 
 &lt;p&gt;The documentation that you will see on godoc.org is very similar to the documentation that you get when running the local &lt;code&gt;godoc&lt;/code&gt; server, but as pointed out in the comments, godoc.org doesn&amp;rsquo;t use the output from the &lt;code&gt;godoc&lt;/code&gt; tool.&lt;/p&gt;
 
-&lt;h2 id=&#34;go-doc-the-package:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;go/doc—the package&lt;/h2&gt;
+&lt;h2 id=&#34;go-doc-the-package&#34;&gt;go/doc—the package&lt;/h2&gt;
 
 &lt;p&gt;The command &lt;code&gt;godoc&lt;/code&gt; and the website godoc.org both rely on the package &lt;code&gt;go/doc&lt;/code&gt; to extract source code documentation.&lt;/p&gt;
 
@@ -285,13 +285,13 @@ package doc
 ...
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;if-in-doubt:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;If in doubt…&lt;/h2&gt;
+&lt;h2 id=&#34;if-in-doubt&#34;&gt;If in doubt…&lt;/h2&gt;
 
 &lt;p&gt;When people are referring to the package go/doc in casual conversation, they&amp;rsquo;ll often drop the slash. And when saying &lt;em&gt;go doc&lt;/em&gt; they could be referring to GoDoc, the website. And, you know how it is… they might actually be talking about the godoc tool.&lt;/p&gt;
 
 &lt;p&gt;If you&amp;rsquo;re unsure of exactly which one they mean, ask for clarification!&lt;/p&gt;
 
-&lt;h2 id=&#34;summary:d20d2a74ccb4f63cfef4591d936541f7&#34;&gt;Summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
 
 &lt;p&gt;The package &lt;code&gt;go/doc&lt;/code&gt; is used by other tools to extract the documentation comments from the AST.&lt;/p&gt;
 

@@ -84,7 +84,7 @@
 <li>point flag.Usage to a custom function</li>
 </ol>
 
-<h2 id="redefining-flag-usage-inline:bce2e394d70a23698c5d1d29a948f878">Redefining flag.Usage Inline</h2>
+<h2 id="redefining-flag-usage-inline">Redefining flag.Usage Inline</h2>
 
 <p>You can override the Usage variable by defining an unnamed function and assigning it to <code>flag.Usage</code>.</p>
 
@@ -96,7 +96,7 @@
 }
 </code></pre>
 
-<h2 id="pointing-flag-usage-to-a-custom-function:bce2e394d70a23698c5d1d29a948f878">Pointing flag.Usage to a Custom Function</h2>
+<h2 id="pointing-flag-usage-to-a-custom-function">Pointing flag.Usage to a Custom Function</h2>
 
 <p>If the custom definition is long or complex, you may want to define it as a separate function so you don&rsquo;t clutter up your <code>main</code>. You can then point <code>flag.Usage</code> to the custom function.</p>
 
@@ -111,7 +111,7 @@ func usage() {
 }
 </code></pre>
 
-<h2 id="refer-to-the-documentation:bce2e394d70a23698c5d1d29a948f878">Refer to the Documentation</h2>
+<h2 id="refer-to-the-documentation">Refer to the Documentation</h2>
 
 <p>To see how the original function is defined, take a look at the output of <code>go doc</code>.</p>
 

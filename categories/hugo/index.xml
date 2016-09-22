@@ -112,5 +112,149 @@ $ cd yoursite
 </description>
     </item>
     
+    <item>
+      <title>Deploying a Stand-Alone Hugo Site to GitHub Pages Mapped to a Custom Domain</title>
+      <link>http://whipperstacker.com/2015/11/27/deploying-a-stand-alone-hugo-site-to-github-pages-mapped-to-a-custom-domain</link>
+      <pubDate>Fri, 27 Nov 2015 08:26:28 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2015/11/27/deploying-a-stand-alone-hugo-site-to-github-pages-mapped-to-a-custom-domain</guid>
+      <description>
+
+&lt;p&gt;If you already know how to use Hugo, and you&amp;rsquo;ve never used GitHub Pages before, and
+you just want to figure out how to get everything wired up and deployed with the least
+amount of fuss necessary, then a lot of the blog posts and tutorials you&amp;rsquo;ll find are
+going to be a bit frustrating.&lt;/p&gt;
+
+&lt;p&gt;Some tutorials will explain the GitHub Pages part in detail, but will make assumptions
+about how you&amp;rsquo;re generating your site, which won&amp;rsquo;t necessarily match what Hugo does.&lt;/p&gt;
+
+&lt;p&gt;Other tutorials will assume that you know &lt;em&gt;nothing&lt;/em&gt;, and will explain every step of
+everything from scratch.&lt;/p&gt;
+
+&lt;p&gt;This post assumes that you know what all the pieces are (hugo, repositories, a bit of DNS),
+and you just want to figure out the easiest way to stitch it all together.&lt;/p&gt;
+
+&lt;p&gt;First, a warning:&lt;/p&gt;
+
+&lt;h2 id=&#34;don-t-make-a-gh-pages-branch&#34;&gt;Don&amp;rsquo;t Make a &lt;code&gt;gh-pages&lt;/code&gt; Branch&lt;/h2&gt;
+
+&lt;p&gt;A lot of the documentation you&amp;rsquo;ll find will talk about creating a branch
+called &lt;code&gt;gh-pages&lt;/code&gt; for the HTML. This is great if you&amp;rsquo;re creating a portfolio
+site with sub-sites for different projects on GitHub.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re looking to create a stand-alone site mapped to a custom domain,
+then that is not the documentation you need.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;gh-pages&lt;/code&gt; branches are what GitHub refers to as &lt;em&gt;Project Pages&lt;/em&gt;. What
+you need when creating a stand-alone site are &lt;em&gt;User Pages&lt;/em&gt; or &lt;em&gt;Organization Pages&lt;/em&gt;
+(which are the same thing, it just depends on if your GitHub user is a user
+or an organization).&lt;/p&gt;
+
+&lt;p&gt;Ok, moving on.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-tale-of-two-repositories&#34;&gt;A Tale of Two Repositories&lt;/h2&gt;
+
+&lt;p&gt;The trick to deploying a stand-alone, hugo-generated site that will be hosted
+on a custom domain is that everything within &lt;code&gt;public/&lt;/code&gt; needs to be in its own
+repository, and that repository &lt;em&gt;must&lt;/em&gt; be named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;, where
+&lt;code&gt;&amp;lt;username&amp;gt;&lt;/code&gt; is your actual GitHub username.&lt;/p&gt;
+
+&lt;p&gt;This means that all the markdown and templates and configuration needs to go in
+a separate repository. The repository with all the Hugo stuff can be named
+whatever you like. For the sake of argument, let&amp;rsquo;s assume this repository is called &lt;code&gt;blog&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The initial setup depends on what your current situation is. Most likely, either:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;nothing is committed to source control yet, or&lt;/li&gt;
+&lt;li&gt;you already have your hugo site committed and pushed up to the &lt;code&gt;blog&lt;/code&gt; repository
+on GitHub.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;setup-when-nothing-is-committed&#34;&gt;Setup When Nothing is Committed&lt;/h3&gt;
+
+&lt;p&gt;Create two new, empty repositories on GitHub:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;blog&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; Make sure to check the &lt;em&gt;Initialize this repository with a
+README&lt;/em&gt; box, since that will make the next step easier.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Kill your hugo server so that it stops regenerating the HTML.&lt;/p&gt;
+
+&lt;p&gt;Delete the &lt;code&gt;public/&lt;/code&gt; directory with &lt;code&gt;rm -r public/&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Initialize a git repository and add the remote:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git init
+$ git remote add origin git@github.com:&amp;lt;username&amp;gt;/blog.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;setup-when-you-ve-already-committed-and-pushed&#34;&gt;Setup When You&amp;rsquo;ve Already Committed and Pushed&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve already got your Hugo site committed to source control and pushed up to
+GitHub, then the process is similar, except that you need to make room for the submodule
+that you&amp;rsquo;re going to add right after the setup is complete.&lt;/p&gt;
+
+&lt;p&gt;Kill your hugo server so that it stops regenerating the HTML.&lt;/p&gt;
+
+&lt;p&gt;Create a new, empty repository named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; on GitHub, making sure
+to tick the &lt;em&gt;Initialize this repository with a README&lt;/em&gt; box.&lt;/p&gt;
+
+&lt;p&gt;Delete the &lt;code&gt;public/&lt;/code&gt; directory from git:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git rm -r public
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;adding-the-submodule&#34;&gt;Adding the Submodule&lt;/h3&gt;
+
+&lt;p&gt;Clone the &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; repo into a submodule in &lt;code&gt;public&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git submodule add git@github.com:&amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;.github.io.git public
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add everything and push it up to GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add .
+$ git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;deploying&#34;&gt;Deploying&lt;/h3&gt;
+
+&lt;p&gt;Regenerate the HTML and push the submodule up to GitHub:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ hugo -t -theme=YOURTHEME
+$ cd public
+$ git add .
+$ git commit -m &amp;quot;Generate site&amp;quot;
+$ git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should be able to see the index page up on &lt;username&gt;.github.io a few moments later.&lt;/p&gt;
+
+&lt;p&gt;Add a handy deploy script like &lt;a href=&#34;https://github.com/spencerlyon2/hugo_gh_blog/blob/master/deploy.sh&#34;&gt;Spencer Lyon&amp;rsquo;s script&lt;/a&gt; to simplify things a bit.&lt;/p&gt;
+
+&lt;h2 id=&#34;mapping-a-custom-domain&#34;&gt;Mapping a Custom Domain&lt;/h2&gt;
+
+&lt;p&gt;Whether you&amp;rsquo;re going to use a subdomain like &lt;code&gt;blog.yoursite.com&lt;/code&gt; or an apex domain like
+&lt;code&gt;yoursite.com&lt;/code&gt;, you need to first add a file named CNAME to the submodule repository containing
+the domain you&amp;rsquo;re mapping to.&lt;/p&gt;
+
+&lt;p&gt;Note that this file should be named &lt;code&gt;CNAME&lt;/code&gt;, even if the DNS record you&amp;rsquo;re creating is an A record
+or ALIAS record rather than a CNAME record.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re mapping a subdomain, create a CNAME record with your DNS provider. For an apex domain
+you&amp;rsquo;ll need either an ALIAS record on an A record. It depends on the provider.&lt;/p&gt;
+
+&lt;p&gt;For more information about DNS mappings, check out the &lt;a href=&#34;https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/&#34;&gt;guide on GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;regenerating-all-the-urls&#34;&gt;Regenerating All the URLS&lt;/h2&gt;
+
+&lt;p&gt;Once the DNS has propagated you&amp;rsquo;re going to need to change the base host name in the Hugo config
+file, regenerate the site with the correct urls, and redeploy.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

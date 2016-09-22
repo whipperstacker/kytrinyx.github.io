@@ -7,8 +7,111 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Katrina Owen</copyright>
-    <lastBuildDate>Fri, 27 Nov 2015 08:26:28 -0700</lastBuildDate>
+    <lastBuildDate>Thu, 22 Sep 2016 06:11:01 -0700</lastBuildDate>
     <atom:link href="http://whipperstacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Convert an Existing Site into Hugo</title>
+      <link>http://whipperstacker.com/2016/09/22/convert-an-existing-site-into-hugo</link>
+      <pubDate>Thu, 22 Sep 2016 06:11:01 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2016/09/22/convert-an-existing-site-into-hugo</guid>
+      <description>
+
+&lt;p&gt;There are times when all you need is a bit of hand crafted HTML. A home page. An about page. Maybe one to list your favorite brownie recipe.&lt;/p&gt;
+
+&lt;p&gt;And then there are times when you &lt;em&gt;thought&lt;/em&gt; all you needed was a brochure site, and a few months later you realize that every few days you&amp;rsquo;re adding another page, which involves annoying things like copy/pasting the same header and footer everywhere, and fiddling with navigation.&lt;/p&gt;
+
+&lt;p&gt;When it was just going to be three pages, writing out all the HTML for the prose was fine. Now, not so much. Now you&amp;rsquo;re aching for markdown, partials, and navigation that takes care of itself.&lt;/p&gt;
+
+&lt;p&gt;You could write a full-on dynamic site, but it would be overkill. You don&amp;rsquo;t need dynamic content, you need HTML that doesn&amp;rsquo;t suck.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, the delightfully easy to use static site generator, is a great choice, but the documentation assumes that you&amp;rsquo;ll be using an existing template. If you&amp;rsquo;ve already got a perfectly good site design, then a third-party template is more trouble than it&amp;rsquo;s worth.&lt;/p&gt;
+
+&lt;p&gt;Instead, you want to reconfigure your existing website so that hugo &lt;em&gt;generates that&lt;/em&gt;. Adding new pages will be a simple matter of adding a new markdown file. Everything else should take care of itself.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the plan:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Wire hugo up to generate your existing website without any changes.&lt;/li&gt;
+&lt;li&gt;Extract shared markup into partials.&lt;/li&gt;
+&lt;li&gt;Create a template that can generate a basic page.&lt;/li&gt;
+&lt;li&gt;Convert each page into markdown.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;wire-up-hugo&#34;&gt;Wire Up Hugo&lt;/h2&gt;
+
+&lt;p&gt;Generate a brand new hugo site:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ hugo new site yoursite
+$ cd yoursite
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Delete the generated static directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rmdir static
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Copy your entire old site to be the new static directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cp -r ~/path/to/oldsite static
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, move your index page into the layouts directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mv static/index.html layouts/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can now run &lt;code&gt;hugo server&lt;/code&gt; to view your site at on &lt;a href=&#34;http://localhost:1313/&#34;&gt;localhost&lt;/a&gt;, or run &lt;code&gt;hugo&lt;/code&gt; to generate the full site to the &lt;code&gt;public/&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;h2 id=&#34;extract-partials&#34;&gt;Extract Partials&lt;/h2&gt;
+
+&lt;p&gt;The next step is to create partials for the header and footer.&lt;/p&gt;
+
+&lt;p&gt;They&amp;rsquo;re going to go in &lt;code&gt;layouts/partials&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;layouts/partials/
+├── footer.html
+└── header.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Copy the header stuff from &lt;code&gt;layouts/index.html&lt;/code&gt; into &lt;code&gt;header.html&lt;/code&gt; and the footer stuff into &lt;code&gt;footer.html&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then replace the header stuff and footer stuff in &lt;code&gt;layouts/index.html&lt;/code&gt; with calls to &lt;code&gt;partial&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+
+&amp;lt;!-- the main part of the page --&amp;gt;
+
+{{ partial &amp;quot;footer.html&amp;quot; }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you visit &lt;a href=&#34;http://localhost:1313/&#34;&gt;localhost&lt;/a&gt; everything should still look right. You should also still be able to generate the site to &lt;code&gt;public/&lt;/code&gt; with the &lt;code&gt;hugo&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;h2 id=&#34;create-a-page-template&#34;&gt;Create a Page Template&lt;/h2&gt;
+
+&lt;p&gt;Create a new file at &lt;code&gt;layouts/_default/single.html&lt;/code&gt; and give it the header, footer, and a placeholder for the content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+
+{{ .Content }}
+
+{{ partial &amp;quot;footer.html&amp;quot; }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You might have more boilerplate you want to stick around the &lt;code&gt;.Content&lt;/code&gt; directive, but this is the basic idea.&lt;/p&gt;
+
+&lt;h2 id=&#34;convert-existing-pages&#34;&gt;Convert Existing Pages&lt;/h2&gt;
+
+&lt;p&gt;Now, one by one, you can turn a static HTML page into a bit of markdown that uses your new template.&lt;/p&gt;
+
+&lt;p&gt;For example if you have an about page at &lt;code&gt;static/about/index.html&lt;/code&gt;, you can now create &lt;code&gt;content/about.md&lt;/code&gt; with just the meat of the page. You can actually copy the HTML straight to &lt;code&gt;about.md&lt;/code&gt; as a first step. It will generate it just fine. Then turn the markup into markdown.&lt;/p&gt;
+
+&lt;h2 id=&#34;add-new-content&#34;&gt;Add New Content&lt;/h2&gt;
+
+&lt;p&gt;At this point you&amp;rsquo;ll be able to add new markdown pages to &lt;code&gt;content/&lt;/code&gt; and they&amp;rsquo;ll be generated correctly.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Deploying a Stand-Alone Hugo Site to GitHub Pages Mapped to a Custom Domain</title>
@@ -1038,108 +1141,6 @@ func usage() {
 &lt;p&gt;To see how the original function is defined, take a look at the output of &lt;code&gt;go doc&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;If you just want to change the header, there&amp;rsquo;s not much to it. If you also want to change how the flags are displayed, then take a look at the documentation for &lt;code&gt;flag.PrintDefaults&lt;/code&gt; and &lt;code&gt;flag.VisitAll&lt;/code&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Measuring Full Test Coverage of Integration Tests in a Project using -coverpkg</title>
-      <link>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</link>
-      <pubDate>Thu, 01 Oct 2015 11:08:50 -0700</pubDate>
-      
-      <guid>http://whipperstacker.com/2015/10/01/measuring-full-test-coverage-of-integration-tests-in-a-project-using--coverpkg</guid>
-      <description>
-
-&lt;p&gt;When you have integration tests that are wiring a bunch of things together, it&amp;rsquo;s not uncommon to get suspiciously low test coverage scores when using &lt;code&gt;go test -cover&lt;/code&gt;. You&amp;rsquo;ll often see this with tests for REST API handlers, or command-line interface (CLI) commands.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve even seen scores of 0%, when clearly there is code being exercised. It&amp;rsquo;s just that the code happens to live in other packages within the project.&lt;/p&gt;
-
-&lt;p&gt;Because these tests tie so many things together, what you really want to know is much of the &lt;em&gt;entire&lt;/em&gt; codebase is exercised when they are run.&lt;/p&gt;
-
-&lt;p&gt;To illustrate, &lt;a href=&#34;https://github.com/kytrinyx/fish&#34;&gt;fish&lt;/a&gt; is a small, somewhat whimsical command-line application, that provides random fish-ascii art.&lt;/p&gt;
-
-&lt;p&gt;It takes a &lt;code&gt;-msg&lt;/code&gt; flag, and outputs a fish that swims and talks.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go run main.go -msg=&amp;quot;Lovely day for a swim&amp;quot; ./...
-
-          o˚• Lovely day for a swim .o.˚
-&amp;gt;&amp;lt;«««º&amp;gt; ·°
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In addition to main, there are two packages: &lt;code&gt;bubbles&lt;/code&gt; and &lt;code&gt;fish&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.
-├── bubbles
-│   └── bubbles.go
-├── fish
-│   └── fish.go
-├── main.go
-└── main_test.go
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The tests for the application live in &lt;code&gt;main_test.go&lt;/code&gt;, and they&amp;rsquo;re very high level. The tests require the &lt;code&gt;fish&lt;/code&gt; package, and the fish package, in turn, requires the &lt;code&gt;bubbles&lt;/code&gt; package.&lt;/p&gt;
-
-&lt;h2 id=&#34;measuring-test-coverage-with-cover&#34;&gt;Measuring Test Coverage with -cover&lt;/h2&gt;
-
-&lt;p&gt;Running with -cover gives 33% coverage.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go test -cover
-PASS
-coverage: 33.3% of statements
-ok      github.com/kytrinyx/fish    0.021s
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That seems low. We can get some statistics about exactly what was exercised by the tests by using the &lt;code&gt;-coverprofile&lt;/code&gt; flag.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go test -coverprofile=cover.out
-PASS
-coverage: 33.3% of statements
-ok      github.com/kytrinyx/fish    0.024s
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using the go tool we can take a closer look at those stats.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go tool cover -func=cover.out
-github.com/kytrinyx/fish/main.go:16:    main        0.0%
-github.com/kytrinyx/fish/main.go:23:    Doodle      100.0%
-total:                  (statements)    33.3%
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Main is essentially a one-liner, and doesn&amp;rsquo;t need to be tested. Doodle is also a one-liner, so 100% test coverage makes sense. But Doodle calls fish, which in turn calls bubbles, and we&amp;rsquo;re not seeing any stats for either of those packages.&lt;/p&gt;
-
-&lt;p&gt;We need to get the stats for the dependencies.&lt;/p&gt;
-
-&lt;h2 id=&#34;measuring-test-coverage-with-coverpkg&#34;&gt;Measuring Test Coverage with -coverpkg&lt;/h2&gt;
-
-&lt;p&gt;The flag that does this is &lt;code&gt;-coverpkg&lt;/code&gt;. It takes a comma-separated list of the packages you&amp;rsquo;re interested in, and it also accepts the handy &lt;code&gt;./...&lt;/code&gt; shortcut that so many other go commands understands to mean &lt;em&gt;this package and all packages in the subdirectories, recursively&lt;/em&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go test -coverpkg=./...
-PASS
-coverage: 81.0% of statements in ./...
-ok      github.com/kytrinyx/fish    0.021s
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;81% is excellent test coverage. Let&amp;rsquo;s see what&amp;rsquo;s included.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go test -coverpkg=./... -coverprofile=cover.out
-go tool cover -func=cover.out
-
-github.com/kytrinyx/fish/bubbles/bubbles.go:21: New     66.7%
-github.com/kytrinyx/fish/bubbles/bubbles.go:29: Embellish   100.0%
-github.com/kytrinyx/fish/bubbles/bubbles.go:34: Blub        100.0%
-github.com/kytrinyx/fish/bubbles/bubbles.go:42: randomBubble    100.0%
-github.com/kytrinyx/fish/fish/fish.go:23:   randomBody  100.0%
-github.com/kytrinyx/fish/fish/fish.go:27:   randomEye   100.0%
-github.com/kytrinyx/fish/fish/fish.go:31:   randomFin   100.0%
-github.com/kytrinyx/fish/fish/fish.go:36:   New     66.7%
-github.com/kytrinyx/fish/fish/fish.go:47:   Say     100.0%
-github.com/kytrinyx/fish/main.go:16:        main        0.0%
-github.com/kytrinyx/fish/main.go:23:        Doodle      100.0%
-total:                      (statements)    81.0%
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It turns out the only things that are not covered are main (0%), bubbles.New (67%), and fish.New (67%).&lt;/p&gt;
-
-&lt;p&gt;That seems perfectly acceptable.&lt;/p&gt;
 </description>
     </item>
     

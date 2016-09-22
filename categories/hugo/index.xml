@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Whipperstacker</title>
+    <link>http://whipperstacker.com/categories/hugo/index.xml</link>
+    <description>Recent content on Whipperstacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Katrina Owen</copyright>
+    <atom:link href="http://whipperstacker.com/categories/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Convert an Existing Site into Hugo</title>
+      <link>http://whipperstacker.com/2016/09/22/convert-an-existing-site-into-hugo</link>
+      <pubDate>Thu, 22 Sep 2016 06:11:01 -0700</pubDate>
+      
+      <guid>http://whipperstacker.com/2016/09/22/convert-an-existing-site-into-hugo</guid>
+      <description>
+
+&lt;p&gt;There are times when all you need is a bit of hand crafted HTML. A home page. An about page. Maybe one to list your favorite brownie recipe.&lt;/p&gt;
+
+&lt;p&gt;And then there are times when you &lt;em&gt;thought&lt;/em&gt; all you needed was a brochure site, and a few months later you realize that every few days you&amp;rsquo;re adding another page, which involves annoying things like copy/pasting the same header and footer everywhere, and fiddling with navigation.&lt;/p&gt;
+
+&lt;p&gt;When it was just going to be three pages, writing out all the HTML for the prose was fine. Now, not so much. Now you&amp;rsquo;re aching for markdown, partials, and navigation that takes care of itself.&lt;/p&gt;
+
+&lt;p&gt;You could write a full-on dynamic site, but it would be overkill. You don&amp;rsquo;t need dynamic content, you need HTML that doesn&amp;rsquo;t suck.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, the delightfully easy to use static site generator, is a great choice, but the documentation assumes that you&amp;rsquo;ll be using an existing template. If you&amp;rsquo;ve already got a perfectly good site design, then a third-party template is more trouble than it&amp;rsquo;s worth.&lt;/p&gt;
+
+&lt;p&gt;Instead, you want to reconfigure your existing website so that hugo &lt;em&gt;generates that&lt;/em&gt;. Adding new pages will be a simple matter of adding a new markdown file. Everything else should take care of itself.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the plan:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Wire hugo up to generate your existing website without any changes.&lt;/li&gt;
+&lt;li&gt;Extract shared markup into partials.&lt;/li&gt;
+&lt;li&gt;Create a template that can generate a basic page.&lt;/li&gt;
+&lt;li&gt;Convert each page into markdown.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;wire-up-hugo&#34;&gt;Wire Up Hugo&lt;/h2&gt;
+
+&lt;p&gt;Generate a brand new hugo site:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ hugo new site yoursite
+$ cd yoursite
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Delete the generated static directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rmdir static
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Copy your entire old site to be the new static directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cp -r ~/path/to/oldsite static
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, move your index page into the layouts directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mv static/index.html layouts/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can now run &lt;code&gt;hugo server&lt;/code&gt; to view your site at on &lt;a href=&#34;http://localhost:1313/&#34;&gt;localhost&lt;/a&gt;, or run &lt;code&gt;hugo&lt;/code&gt; to generate the full site to the &lt;code&gt;public/&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;h2 id=&#34;extract-partials&#34;&gt;Extract Partials&lt;/h2&gt;
+
+&lt;p&gt;The next step is to create partials for the header and footer.&lt;/p&gt;
+
+&lt;p&gt;They&amp;rsquo;re going to go in &lt;code&gt;layouts/partials&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;layouts/partials/
+├── footer.html
+└── header.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Copy the header stuff from &lt;code&gt;layouts/index.html&lt;/code&gt; into &lt;code&gt;header.html&lt;/code&gt; and the footer stuff into &lt;code&gt;footer.html&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then replace the header stuff and footer stuff in &lt;code&gt;layouts/index.html&lt;/code&gt; with calls to &lt;code&gt;partial&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+
+&amp;lt;!-- the main part of the page --&amp;gt;
+
+{{ partial &amp;quot;footer.html&amp;quot; }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you visit &lt;a href=&#34;http://localhost:1313/&#34;&gt;localhost&lt;/a&gt; everything should still look right. You should also still be able to generate the site to &lt;code&gt;public/&lt;/code&gt; with the &lt;code&gt;hugo&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;h2 id=&#34;create-a-page-template&#34;&gt;Create a Page Template&lt;/h2&gt;
+
+&lt;p&gt;Create a new file at &lt;code&gt;layouts/_default/single.html&lt;/code&gt; and give it the header, footer, and a placeholder for the content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+
+{{ .Content }}
+
+{{ partial &amp;quot;footer.html&amp;quot; }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You might have more boilerplate you want to stick around the &lt;code&gt;.Content&lt;/code&gt; directive, but this is the basic idea.&lt;/p&gt;
+
+&lt;h2 id=&#34;convert-existing-pages&#34;&gt;Convert Existing Pages&lt;/h2&gt;
+
+&lt;p&gt;Now, one by one, you can turn a static HTML page into a bit of markdown that uses your new template.&lt;/p&gt;
+
+&lt;p&gt;For example if you have an about page at &lt;code&gt;static/about/index.html&lt;/code&gt;, you can now create &lt;code&gt;content/about.md&lt;/code&gt; with just the meat of the page. You can actually copy the HTML straight to &lt;code&gt;about.md&lt;/code&gt; as a first step. It will generate it just fine. Then turn the markup into markdown.&lt;/p&gt;
+
+&lt;h2 id=&#34;add-new-content&#34;&gt;Add New Content&lt;/h2&gt;
+
+&lt;p&gt;At this point you&amp;rsquo;ll be able to add new markdown pages to &lt;code&gt;content/&lt;/code&gt; and they&amp;rsquo;ll be generated correctly.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

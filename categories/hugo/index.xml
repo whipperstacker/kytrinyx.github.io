@@ -78,11 +78,11 @@ $ cd yoursite
 
 &lt;p&gt;Then replace the header stuff and footer stuff in &lt;code&gt;layouts/index.html&lt;/code&gt; with calls to &lt;code&gt;partial&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; . }}
 
 &amp;lt;!-- the main part of the page --&amp;gt;
 
-{{ partial &amp;quot;footer.html&amp;quot; }}
+{{ partial &amp;quot;footer.html&amp;quot; . }}
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If you visit &lt;a href=&#34;http://localhost:1313/&#34;&gt;localhost&lt;/a&gt; everything should still look right. You should also still be able to generate the site to &lt;code&gt;public/&lt;/code&gt; with the &lt;code&gt;hugo&lt;/code&gt; command.&lt;/p&gt;
@@ -91,11 +91,11 @@ $ cd yoursite
 
 &lt;p&gt;Create a new file at &lt;code&gt;layouts/_default/single.html&lt;/code&gt; and give it the header, footer, and a placeholder for the content:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; }}
+&lt;pre&gt;&lt;code&gt;{{ partial &amp;quot;header.html&amp;quot; . }}
 
 {{ .Content }}
 
-{{ partial &amp;quot;footer.html&amp;quot; }}
+{{ partial &amp;quot;footer.html&amp;quot; . }}
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You might have more boilerplate you want to stick around the &lt;code&gt;.Content&lt;/code&gt; directive, but this is the basic idea.&lt;/p&gt;

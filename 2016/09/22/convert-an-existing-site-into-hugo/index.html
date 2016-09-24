@@ -130,11 +130,11 @@ $ cd yoursite
 
 <p>Then replace the header stuff and footer stuff in <code>layouts/index.html</code> with calls to <code>partial</code>:</p>
 
-<pre><code>{{ partial &quot;header.html&quot; }}
+<pre><code>{{ partial &quot;header.html&quot; . }}
 
 &lt;!-- the main part of the page --&gt;
 
-{{ partial &quot;footer.html&quot; }}
+{{ partial &quot;footer.html&quot; . }}
 </code></pre>
 
 <p>If you visit <a href="http://localhost:1313/">localhost</a> everything should still look right. You should also still be able to generate the site to <code>public/</code> with the <code>hugo</code> command.</p>
@@ -143,11 +143,11 @@ $ cd yoursite
 
 <p>Create a new file at <code>layouts/_default/single.html</code> and give it the header, footer, and a placeholder for the content:</p>
 
-<pre><code>{{ partial &quot;header.html&quot; }}
+<pre><code>{{ partial &quot;header.html&quot; . }}
 
 {{ .Content }}
 
-{{ partial &quot;footer.html&quot; }}
+{{ partial &quot;footer.html&quot; . }}
 </code></pre>
 
 <p>You might have more boilerplate you want to stick around the <code>.Content</code> directive, but this is the basic idea.</p>

@@ -26,7 +26,7 @@
 
 &lt;p&gt;You could write a full-on dynamic site, but it would be overkill. You don&amp;rsquo;t need dynamic content, you need HTML that doesn&amp;rsquo;t suck.&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, the delightfully easy to use static site generator, is a great choice, but the documentation assumes that you&amp;rsquo;ll be using an existing template. If you&amp;rsquo;ve already got a perfectly good site design, then a third-party template is more trouble than it&amp;rsquo;s worth.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;, the delightfully easy to use static site generator, is a great choice, but the documentation assumes that you&amp;rsquo;ll be using an existing theme. If you&amp;rsquo;ve already got a perfectly good site design, then a third-party theme is more trouble than it&amp;rsquo;s worth.&lt;/p&gt;
 
 &lt;p&gt;Instead, you want to reconfigure your existing website so that hugo &lt;em&gt;generates that&lt;/em&gt;. Adding new pages will be a simple matter of adding a new markdown file. Everything else should take care of itself.&lt;/p&gt;
 
